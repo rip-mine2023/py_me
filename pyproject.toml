@@ -1,6 +1,6 @@
 [project]
 name = "py_me"
-version = "1.3.7"
+version = "1.3.8"
 description = "Biblioteca Python com módulos para sons e interface gráfica"
 authors = [{ name = "Isaias da Silva Nobrega", email = "isaiasdasilvanobrega@gmail.com" }]
 maintainers = [{ name = "Isaias da Silva Nobrega", email = "isaiasdasilvanobrega@gmail.com" }]

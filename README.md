@@ -4,9 +4,9 @@
 
 ## versão
 
-**1.3.7** - *lançado em 4/10/2025*
+**1.3.8** - *lançado em 4/10/2025*
 
-**nome** - informativa(v3) - debug(6)
+**nome** - informativa(v8) - debug(7)
 
 ## mudanças
 
