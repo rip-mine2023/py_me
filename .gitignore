@@ -1,0 +1,20 @@
+# Ignore Python bytecode files and caches
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Ignore virtual environments
+venv/
+.env/
+.env.bak/
+
+# Ignore editor/IDE files
+.vscode/
+*.swp
+*.swo
+.idea/
+
+# Ignore build artifacts
+dist/
+build/
+*.egg-info/
