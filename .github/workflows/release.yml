@@ -25,4 +25,4 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           user: __token__
-          password: ${{ py_me_pypi_token }}
+          password: ${{ secrets.PYPI_API_TOKEN }}
