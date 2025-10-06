@@ -228,3 +228,69 @@ class music_me:
                 print(e)
     
         threading.Timer(tempo, para).start()
+    def volume_geral(volume,  tempo):
+        """
+        Ajusta o volume geral de todos os sons.
+
+        Args:
+            volume(float) (o volume desejado, entre 0.0 e 1.0)
+            tempo(float) (o tempo após o inicio do programa)
+        
+        comportamento:
+            - ajusta o volume geral de todos os sons depois do tempo determinado
+
+        exemplo:
+            >>> from py_me import music_me
+            >>> music_me.trilha_sonora_inloop(2, "minha\\batida.mp3")
+            >>> music_me.elemento_musical(1, "meu\\elemento.wav", 2)
+            >>> music_me.volume_geral(0.5, 20) #ajusta o volume para 50% depois de vinte segundos
+        
+          returns:
+            None
+        """
+        def ajusta_volume():
+            try:
+                if 0.0 <= volume <= 1.0:
+                    pygame.mixer.music.set_volume(volume)
+                    print(f"Volume geral ajustado para {volume * 100}%")
+                else:
+                    print("Volume deve estar entre 0.0 e 1.0")
+            except Exception as e:
+                print("Erro inesperado aconteceu:")
+                print(e)
+    
+        threading.Timer(tempo, ajusta_volume).start()
+    def volume_elemento(som, volume, tempo):
+        """
+        Ajusta o volume de um elemento especifico.
+
+        Args:
+            elemento(pygame.mixer.Sound) (o elemento a ter o volume ajustado)
+            volume(float) (o volume desejado, entre 0.0 e 1.0)
+            tempo(float) (o tempo após o inicio do programa)
+
+        comportamento:
+            - ajusta o volume de um elemento especifico depois do tempo determinado
+
+        exemplo:
+            >>> from py_me import music_me
+            >>> aaa = music_me.elemento_musical(1, "meu\\elemento.wav", 2)
+            >>> music_me.volume_elemento(aaa, 0.3, 20) #ajusta o volume do elemento aaa para 30% depois de vinte segundos
+        returns:
+            None
+        """
+        def ajusta_volume():
+            try:
+                if hasattr(som, "sound") and som.sound:
+                    if 0.0 <= volume <= 1.0:
+                        som.sound.set_volume(volume)
+                        print(f"Volume do elemento ajustado para {volume * 100}%")
+                    else:
+                        print("Volume deve estar entre 0.0 e 1.0")
+                else:
+                    print("Elemento inválido ou não está tocando")
+            except Exception as e:
+                print("Erro inesperado aconteceu:")
+                print(e)
+    
+        threading.Timer(tempo, ajusta_volume).start()

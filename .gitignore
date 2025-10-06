@@ -18,3 +18,5 @@ venv/
 dist/
 build/
 *.egg-info/
+minha zona de trabalho.bat
+*.code-workspace
