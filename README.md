@@ -6,12 +6,12 @@
 
 **1.4.1** - *lançado em 6/10/2025*
 
-**nome** - *musica sem volume, não da*
+**nome** - *musica sem volume, não da(v2)* - *debug(1)*
 
 ## mudanças
 
-- adição de nome da verção
-- adição de novas informações
+- adição de nova função em music_me (volume_geral)
+- adição de nova função em music_me (volume_elemento)
 
 ## tk_me
 ### exemplo:

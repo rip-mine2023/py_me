@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='py_me',
-    version='1.4.1',
+    version='1.4.2',
     packages=find_packages(),
     description='Biblioteca com módulos musicais e gráficos',
     author='isaias da silva nobrega',
