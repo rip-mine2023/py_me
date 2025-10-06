@@ -4,9 +4,9 @@
 
 ## versão
 
-**1.3.9** - *lançado em 4/10/2025*
+**1.4.1** - *lançado em 6/10/2025*
 
-**nome** - informativa(v9) - debug(8)
+**nome** - *musica sem volume, não da*
 
 ## mudanças
 
@@ -51,6 +51,8 @@
 - elemento_musical_entonado(velocidade, entonacao, arquivo, tempo_a_esperar=0)
 - dell(elemento, tempo_após_o_inicio_da_reprodução_para_o_del)
 - stop(tempo)
+- volume_elemento(som, volume, tempo)
+- volume_geral(volume,  tempo)
 
 ## dependentes
 - pygame
