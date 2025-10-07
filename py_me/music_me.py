@@ -251,7 +251,12 @@ class music_me:
         def ajusta_volume():
             try:
                 if 0.0 <= volume <= 1.0:
-                    pygame.mixer.music.set_volume(volume)
+                    for i in range(pygame.mixer.get_num_channels()):
+                        ch = pygame.mixer.Channel(i)
+                        if ch.get_busy():
+                            snd = ch.get_sound()
+                            if snd:
+                                snd.set_volume(volume)
                     print(f"Volume geral ajustado para {volume * 100}%")
                 else:
                     print("Volume deve estar entre 0.0 e 1.0")
@@ -283,7 +288,10 @@ class music_me:
             try:
                 if hasattr(som, "sound") and som.sound:
                     if 0.0 <= volume <= 1.0:
-                        som.sound.set_volume(volume)
+                        for i in range(pygame.mixer.get_num_channels()):
+                            channel = pygame.mixer.Channel(i)
+                            if channel.get_sound() == som.sound:
+                                channel.set_volume(volume)
                         print(f"Volume do elemento ajustado para {volume * 100}%")
                     else:
                         print("Volume deve estar entre 0.0 e 1.0")
@@ -292,5 +300,4 @@ class music_me:
             except Exception as e:
                 print("Erro inesperado aconteceu:")
                 print(e)
-    
         threading.Timer(tempo, ajusta_volume).start()

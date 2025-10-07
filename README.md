@@ -4,9 +4,9 @@
 
 ## versão
 
-**1.4.1** - *lançado em 6/10/2025*
+**1.4.3** - *lançado em 6/10/2025*
 
-**nome** - *musica sem volume, não da(v2)* - *debug(1)*
+**nome** - *musica sem volume, não da(v3)* - *debug(2)*
 
 ## mudanças
 
