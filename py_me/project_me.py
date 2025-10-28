@@ -3,6 +3,15 @@ import os
 class project_me:
   def criar_projeto():
     nome = input("qual é o nome do prejeto?: ")
+    altor = input("qual é o seu nome?: ")
+    email = input("qual é o seu email?: ")
+    sim_ou_não = input("tem dependente?: ")
+    dependentes = []
+    while sim_ou_não == "sim":
+      sim_ou_não = input("tem dependente?: ")
+      dependente = input("coloque o dependente: ")
+      dependentes.append(dependente)
+    descrição = input("coloque a descrição do projeto: ")
     if not " " in nome:
       pasta_base = os.path.dirname(os.path.abspath(__file__))
       project = os.path.join(pasta_base, f"{nome}_project")
@@ -26,17 +35,21 @@ class project_me:
         License.write(inscritura_License)
       toml = os.path.join(project, "pyproject.toml")
       with open (toml, "w", encoding="utf-8") as pyproject_toml:
-        inscritura_toml = """[project]
+        toml_alxiliar = f"altor = {altor}, email = {email}"
+        toml_cisença = """file = "LICENSE"""""
+        toml_depententes = """,
+""".join(dependentes)
+        inscritura_toml = f"""[project]
 name = {nome}
 version = "1.1.1"
-description = "coloque descrição"
-authors = [{ name = "nome do altor", email = "emaildoaltor@gmail.com" }]
-maintainers = [{ name = "", email = "" }]
+description = {descrição}
+authors = [{toml_alxiliar}]
+maintainers = [{toml_alxiliar}]
 readme = "README.md"
-license = {file = "LICENSE"}
+license = {toml_cisença}
 requires-python = ">=verção do python minima para o seu projeto" 
   dependencies = [
-      "colocar dependentes"
+      {toml_depententes}
   ]
 keywords = ["coloque", "uma", "tag"]
 classifiers = [
@@ -82,9 +95,9 @@ setup(
 name='{nome}',
 version='1.1.1',
 packages=find_packages(),
-description='adicione uma descrição',
-author='seu nome',
-author_email='seuemail@gmail.com',
+description={descrição},
+author={altor},
+author_email={email}
 )
           """
           setup.write(inscritura_setup)
