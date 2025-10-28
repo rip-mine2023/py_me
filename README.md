@@ -4,9 +4,9 @@
 
 ## versão
 
-**2.1.1** - *lançado em 27/10/25*
+**2.1.2** - *lançado em 28/10/25*
 
-**nome** - *pra ajudar você*
+**nome** - *pra ajudar você(v2)*  - *debug(1)
 
 ## mudanças
 
