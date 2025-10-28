@@ -4,14 +4,13 @@
 
 ## versão
 
-**1.4.3** - *lançado em 6/10/2025*
+**2.1.1** - *lançado em 27/10/25*
 
-**nome** - *musica sem volume, não da(v3)* - *debug(2)*
+**nome** - *pra ajudar você*
 
 ## mudanças
 
-- adição de nova função em music_me (volume_geral)
-- adição de nova função em music_me (volume_elemento)
+- adição de novo modulo (project_me)
 
 ## tk_me
 ### exemplo:
@@ -53,6 +52,18 @@
 - stop(tempo)
 - volume_elemento(som, volume, tempo)
 - volume_geral(volume,  tempo)
+
+## project_me
+### exemplo
+```python
+    from py_me import project_me
+
+    project_me.criar_projeto()
+```
+
+### função
+- criar_projeto()
+
 
 ## dependentes
 - pygame
