@@ -4,13 +4,13 @@
 
 ## versão
 
-**2.1.2** - *lançado em 28/10/25*
+**3.1.1** - *lançado em 08/12/25*
 
-**nome** - *pra ajudar você(v2)*  - *debug(1)
+**nome** - *para ver seus arquivos se replicarem*
 
 ## mudanças
 
-- adição de novo modulo (project_me)
+- adição de novo modulo (os_me)
 
 ## tk_me
 ### exemplo:
@@ -64,6 +64,14 @@
 ### função
 - criar_projeto()
 
+## os_me
+### exemplo
+```python
+    from py_me import os_me
+    a = os_me.path.FileHunter("exemplo.py")
+    b = os_me.path.FileHunter("segundo\\exemplo.py")
+    os_me.file..execution_sequence([a, b], False, False)
+```
 
 ## dependentes
 - pygame

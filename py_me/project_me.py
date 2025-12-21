@@ -24,7 +24,7 @@ class project_me:
         __init__.write(inscritura___init__)
       modulo = os.path.join(pasta_principal, "modulo1.py")
       with open(modulo, "w", encoding="utf-8") as modulo1:
-        inscritura_modulo1 = """class modulo1:
+        inscritura_modulo1 =  f"""class modulo1:
         
   def olá_mundo():
     print("olá_mundo")"""
@@ -69,7 +69,7 @@ classifiers = [
 [build-system]
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
-        """
+"""
         pyproject_toml.write(inscritura_toml)
         leia_me = os.path.join(project, "README.MD")
         with open (leia_me, "w", encoding="utf-8") as README_md:
@@ -85,7 +85,7 @@ from {nome} import modulo1
 
   modulo1.olá_mundo()
 ```
-          """
+"""
           README_md.write(inscritura_README_md)
         setdown = os.path.join(project, "setup.py")
         with open(setdown, "w", encoding="utf-8") as setup:
