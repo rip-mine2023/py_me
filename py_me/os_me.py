@@ -227,7 +227,7 @@ class file_class:
               )
             self.numero += 1
 
-  def create(self, new_path: str, content: str = None) -> str:
+  def create(self, new_path: str, content: str = "") -> str:
     if self.inicio_de_fluxo == True:
       if self.details.enable_logging:
         self.ultilidades.registrar_log(

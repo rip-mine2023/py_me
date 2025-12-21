@@ -73,6 +73,27 @@
     os_me.file..execution_sequence([a, b], False, False)
 ```
 
+### funções
+* file:
+    - def replace
+    - def create
+    - def add
+    - def execution_sequence
+* path:
+    - FileHunter
+    - FileHunter_inverse
+    - FileHunter_SUPER
+    * TIMELINE:
+        - get_version
+        - get_content
+        - get_TIMELINE
+        - show_TIMELINE
+        - del_TIMELINE
+        - execution_versions
+        - del_all
+* details:
+    - @dataclass
+
 ## dependentes
 - pygame
 - pydub
