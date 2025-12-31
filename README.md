@@ -4,13 +4,15 @@
 
 ## versão
 
-**3.1.1** - *lançado em 08/12/25*
+**3.2.1** - *lançado em 08/12/25*
 
-**nome** - *para ver seus arquivos se replicarem*
+**nome** - *para ver seus arquivos se replicarem*(v2) - nova função(1)
 
 ## mudanças
 
-- adição de novo modulo (os_me)
+- adição de Docstrings em os_me
+
+- subistituido função "execution_versions" por função "run_version"
 
 ## tk_me
 ### exemplo:
@@ -89,7 +91,7 @@
         - get_TIMELINE
         - show_TIMELINE
         - del_TIMELINE
-        - execution_versions
+        - run_version
         - del_all
 * details:
     - @dataclass

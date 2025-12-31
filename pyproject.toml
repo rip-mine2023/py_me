@@ -1,7 +1,7 @@
 [project]
 name = "py_me"
-version = "3.1.1"
-description = "Biblioteca Python com módulos para sons e interface gráfica e criação semi altomatica de projetos python"
+version = "3.2.1"
+description = "Biblioteca Python com módulos para sons, interface gráfica, criação semi altomatica de projetos python, e manipulação avançada de arquivos"
 authors = [{ name = "Isaias da Silva Nobrega", email = "isaiasdasilvanobrega@gmail.com" }]
 maintainers = [{ name = "Isaias da Silva Nobrega", email = "isaiasdasilvanobrega@gmail.com" }]
 readme = "README.md"

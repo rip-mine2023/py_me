@@ -121,6 +121,27 @@ class file_class:
       install()
 
   def replace(self, path: str, content: str) -> None:
+    """
+    Replaces all the content of the specified file with new content, or undoes to a previous version by specifying "undo X", where "X" is the file version number.
+
+    Args:
+        path(str): The path to the file that will be altered.
+        content(str): The new content to be placed, or "undo X" for restoration.
+
+    Behavior:
+        - Creates a snapshot of the current content before changes if auto_snapshot_on_edit is enabled.
+        - Replaces the file content if not an undo command.
+        - Restores from the timeline if "undo X" is specified.
+        - Logs the operation and handles errors like file not found or invalid undo.
+
+    Example:
+        >>> from py_me import os_me
+        >>> os_me.file.replace("my\\file.txt", "hello")
+        >>> os_me.file.replace("my\\file.txt", "undo 1")  # Restores version 1
+
+    Returns:
+        None
+    """
     if self.inicio_de_fluxo:
         if self.details.enable_logging:
           self.utilidades.registrar_log(
@@ -228,6 +249,26 @@ class file_class:
             self.numero += 1
 
   def create(self, new_path: str, content: str = "") -> str:
+    """
+    Creates a new file at the specified path with optional initial content.
+
+    Args:
+        new_path(str): The path where the file will be created.
+        content(str optional): Initial content to write; defaults to empty.
+
+    Behavior:
+        - Checks if the file already exists and raises an error if it does.
+        - Creates the file and writes the content.
+        - Logs the creation event if logging is enabled.
+
+    Example:
+        >>> from py_me import os_me
+        >>> os_me.file.create("new_file.txt", "Initial text")
+        'new_file.txt'
+
+    Returns:
+        str (the path of the created file)
+    """
     if self.inicio_de_fluxo == True:
       if self.details.enable_logging:
         self.ultilidades.registrar_log(
@@ -257,6 +298,25 @@ class file_class:
               self.numero += 1
 
   def add(self, path: str, content: str) -> None:
+    """
+    Appends new content to the end of an existing file.
+
+    Args:
+        path(str): The path to the file to append to.
+        content(str): The content to add.
+
+    Behavior:
+        - Appends the content if the file exists.
+        - Logs the addition event.
+        - Handles errors like file not found.
+
+    Example:
+        >>> from py_me import os_me
+        >>> os_me.file.add("my_file.txt", "Appended text")
+
+    Returns:
+        None
+    """
     if self.inicio_de_fluxo == True:
       if self.details.enable_logging:
         self.ultilidades.registrar_log(
@@ -327,6 +387,27 @@ class file_class:
         self.numero_versao += 1
 
   def execution_sequence(self, paths: list, ignore_error: bool = False, list_erros: bool = False) -> None:
+    """
+    Executes Python code from one or more files, with options to ignore errors or list them.
+
+    Args:
+        paths(list): Path(s) to the file(s) to execute.
+        ignore_error(bool optional): If True, continues on errors; defaults to False.
+        list_erros(bool optional): If True, returns a list of errors; defaults to False.
+
+    Behavior:
+        - Executes code in each file sequentially.
+        - Captures output and errors.
+        - Logs successful executions or errors.
+        - Handles empty lists or non-list inputs with errors.
+
+    Example:
+        >>> from py_me import os_me
+        >>> os_me.file.exec(["script1.py", "script2.py"])
+
+    Returns:
+        dict (execution results) or None
+    """
     if self.inicio_de_fluxo == True:
       if self.details.enable_logging:
         self.ultilidades.registrar_log(
@@ -413,7 +494,25 @@ class path_class:
         install()
 
     def FileHunter(self, relative_path: str) -> str | None:
-        # ponto inicial
+        """
+    Searches for a file by ascending through parent directories from the current working directory.
+
+    Args:
+        relative_path(str): The relative path or filename to search for.
+
+    Behavior:
+        - Checks existence in current and parent directories recursively.
+        - Stops at root directory.
+        - Prints success/failure and raises error if not found.
+
+    Example:
+        >>> from py_me import os_me
+        >>> os_me.path.FileHunter("config.txt")
+        '/path/to/config.txt'  # Or None if not found
+
+    Returns:
+        str (full path if found) or None
+    """
         path = self.FilerBust or os.getcwd()
         a = os.path.join(path, relative_path)
 
@@ -439,6 +538,26 @@ class path_class:
                 return None
             
     def FileHunter_inverse(self, relative_path: str, start: str = None) -> str | None:
+      """
+    Searches for a file or directory descending through subdirectories from a start path.
+
+    Args:
+        relative_path(str): The name or suffix to match.
+        start(str optional): Starting directory; defaults to current working directory.
+
+    Behavior:
+        - Walks the directory tree and matches exact names or suffixes.
+        - Prints success and returns first match.
+        - Raises error if not found.
+
+    Example:
+        >>> from py_me import os_me
+        >>> os_me.path.FileHunter_inverse("config.txt", "/start/dir")
+        '/start/dir/sub/config.txt'  # Or None
+
+    Returns:
+        str (full path if found) or None
+    """
       if not start:
         start = os.getcwd()
       for root, dirs, files in os.walk(start):
@@ -464,6 +583,24 @@ class path_class:
       return None
 
     def FileHunter_SUPER(self, relative_path: str) -> str | None:
+      """
+    Performs an advanced search starting from the user's home directory.
+
+    Args:
+        relative_path(str): The relative path or filename to search for.
+
+    Behavior:
+        - Combines FileHunter and FileHunter_inverse from home directory.
+        - Returns the found path or None.
+
+    Example:
+        >>> from py_me import os_me
+        >>> os_me.path.FileHunter_SUPER("Documents/config.txt")
+        '/home/user/Documents/config.txt'  # Or None
+
+    Returns:
+        str (full path if found) or None
+    """
       user_home = os.path.expanduser("~")  
       a = self.FileHunter(user_home)       
       b = self.FileHunter_inverse(relative_path, a)  
@@ -471,6 +608,24 @@ class path_class:
   
     class TIMELINE():
         def get_version(path):
+          """
+    Retrieves the list of version numbers for a file's history.
+
+    Args:
+        path(str): The file path to query.
+
+    Behavior:
+        - Loads the timeline JSON and extracts versions for the path.
+        - Returns empty list if no history.
+
+    Example:
+        >>> from py_me import os_me
+        >>> os_me.path.TIMELINE.get_version("my_file.txt")
+        [1, 2, 3]
+
+    Returns:
+        list (version numbers)
+    """
           pathh = path_class()
           versões = []
           if os.path.exists(pathh.details.timeline_file) and os.path.getsize(pathh.details.timeline_file) > 0:
@@ -484,6 +639,24 @@ class path_class:
                       versões.append(snapshot["versao"])
           return versões
         def get_content(path):
+          """
+    Retrieves the list of contents from all versions of a file's history.
+
+    Args:
+        path(str): The file path to query.
+
+    Behavior:
+        - Loads the timeline JSON and extracts contents for the path.
+        - Returns empty list if no history.
+
+    Example:
+        >>> from py_me import os_me
+        >>> os_me.path.TIMELINE.get_content("my_file.txt")
+        ['Initial', 'Updated', 'Final']
+
+    Returns:
+        list (contents from each version)
+    """
           pathh = path_class()
           conteúdos = []
           if os.path.exists(pathh.details.timeline_file) and os.path.getsize(pathh.details.timeline_file) > 0:
@@ -497,6 +670,24 @@ class path_class:
                       conteúdos.append(snapshot["conteudo"])
           return conteúdos
         def get_TIMELINE(path):
+          """
+    Retrieves the full timeline (snapshots) for a file.
+
+    Args:
+        path(str): The file path to query.
+
+    Behavior:
+        - Loads the timeline JSON and returns all snapshots for the path.
+        - Raises error if no history for the path.
+
+    Example:
+        >>> from py_me import os_me
+        >>> os_me.path.TIMELINE.get_TIMELINE("my_file.txt")
+        [{'versao': 1, 'timestamp': '...', 'conteudo': '...'}, ...]
+
+    Returns:
+        list (snapshots)
+    """
           pathh = path_class()
           timeline = []
           if os.path.exists(pathh.details.timeline_file) and os.path.getsize(pathh.details.timeline_file) > 0:
@@ -517,6 +708,24 @@ class path_class:
                     console.print_exception()
           return timeline
         def show_TIMELINE(path):
+          """
+    Prints the full timeline details for a file.
+
+    Args:
+        path(str): The file path to query.
+
+    Behavior:
+        - Loads and prints version, timestamp, and content for each snapshot.
+        - Raises error if no history.
+
+    Example:
+        >>> from py_me import os_me
+        >>> os_me.path.TIMELINE.show_TIMELINE("my_file.txt")
+        # Prints formatted history
+
+    Returns:
+        None
+    """
           pathh = path_class()
           if os.path.exists(pathh.details.timeline_file) and os.path.getsize(pathh.details.timeline_file) > 0:
               try:
@@ -542,6 +751,24 @@ class path_class:
                   console = Console()
                   console.print_exception()
         def del_TIMELINE(path):
+          """
+    Deletes the history for a specific file from the timeline.
+
+    Args:
+        path(str): The file path whose history to delete.
+
+    Behavior:
+        - Removes the path's entry from the timeline JSON.
+        - Prints confirmation or raises error if no history.
+
+    Example:
+        >>> from py_me import os_me
+        >>> os_me.path.TIMELINE.del_TIMELINE("my_file.txt")
+        history of my_file.txt was deleted
+
+    Returns:
+        None
+    """
           pathh = path_class()
           if os.path.exists(pathh.details.timeline_file) and os.path.getsize(pathh.details.timeline_file) > 0:
               try:
@@ -568,25 +795,86 @@ class path_class:
                 if pathh.details.enable_rich_traceback:
                   console = Console()
                   console.print_exception()
-        def execution_versions(path):
-          pathh = path_class()
-          if os.path.exists(pathh.details.timeline_file) and os.path.getsize(pathh.details.timeline_file) > 0:
-              try:
-                  with open(pathh.details.timeline_file, "r", encoding="utf-8") as f:
-                      data = json.load(f)
-              except json.JSONDecodeError:
-                  data = {}
-              if path in data:
-                  for snapshot in data[path]:
-                      exec(snapshot["conteudo"], {})
-              else:
-                try:
-                  raise os_me_error(f"no history for {path}")
-                except os_me_error:
-                  if pathh.details.enable_rich_traceback:
-                    console = Console()
-                    console.print_exception()
+        @staticmethod
+        def run_version(path: str, version: int, capture_output: bool = True):
+            """
+    Executes the code from a specific version of a file's history.
+
+    Args:
+        path(str): The file path to query.
+        version(int): The version number to execute.
+        capture_output(bool optional): If True, captures stdout/stderr; defaults to True.
+
+    Behavior:
+        - Loads the content from the specified version.
+        - Executes it in a basic sandbox if capturing output.
+        - Raises ValueError if no history or version not found.
+
+    Example:
+        >>> from py_me import os_me
+        >>> os_me.path.TIMELINE.run_version("script.py", 1)
+        {'success': True, 'output': '...', 'error': ''}
+
+    Returns:
+        dict (if capture_output=True) or None
+    """
+            pathh = path_class()
+            timeline = pathh.details.timeline_file
+        
+            if not os.path.exists(timeline):
+                raise ValueError("Nenhum histórico disponível")
+            
+            with open(timeline, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            
+            if path not in data:
+                raise ValueError(f"Sem histórico para {path}")
+            
+            for snapshot in data[path]:
+                if snapshot["versao"] == version:
+                    code = snapshot["conteudo"]
+                
+                    if capture_output:
+                        import io
+                        from contextlib import redirect_stdout, redirect_stderr
+                    
+                        output = io.StringIO()
+                        error = io.StringIO()
+                    
+                        with redirect_stdout(output), redirect_stderr(error):
+                            try:
+                                exec(code, {"__builtins__": {}})  # sandbox muito básico
+                                return {"success": True, "output": output.getvalue(), "error": error.getvalue()}
+                            except Exception as e:
+                                try:
+                                  raise os_me_error({"success": False, "output": output.getvalue(), "error": str(e)})
+                                except os_me_error as f:
+                                   if pathh.details.enable_rich_traceback:
+                                      cursor = Console
+                                      cursor.print_exception(f)
+                                    
+                    else:
+                        exec(code)  # modo unsafe, avisar no docstring
+                        return None
+                
+            raise ValueError(f"Versão {version} não encontrada")
         def del_all():
+          """
+    Deletes all history from the timeline file.
+
+    Args:
+        None
+
+    Behavior:
+        - Overwrites the timeline JSON with an empty dictionary.
+
+    Example:
+        >>> from py_me import os_me
+        >>> os_me.path.TIMELINE.del_all()
+
+    Returns:
+        None
+    """
           pathh = path_class()
           data = {}
           with open(pathh.details.timeline_file, "w", encoding="utf-8") as f:
@@ -594,6 +882,16 @@ class path_class:
           
       
 class os_me:
+   """os_me is a sophisticated audio manipulation module
+  that features a modifiable language,
+  logging system, and versioning.
+  
+  classes:
+  - details
+  - file
+  - path
+    -TIMELINE
+  """
    details = Details()
    file = file_class(details)
    path = path_class(details)
