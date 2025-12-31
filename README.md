@@ -4,9 +4,9 @@
 
 ## versão
 
-**3.2.1** - *lançado em 08/12/25*
+**3.2.2** - *lançado em 31/12/25*
 
-**nome** - *para ver seus arquivos se replicarem*(v2) - nova função(1)
+**nome** - *para ver seus arquivos se replicarem*(v3) - nova função(1) - debug(1)
 
 ## mudanças
 
