@@ -1,6 +1,6 @@
 [project]
 name = "py_me"
-version = "3.3.2"
+version = "3.3.3"
 description = "Biblioteca Python com módulos para sons, interface gráfica, criação semi altomatica de projetos python, e manipulação avançada de arquivos"
 authors = [{ name = "Isaias da Silva Nobrega", email = "isaiasdasilvanobrega@gmail.com" }]
 maintainers = [{ name = "Isaias da Silva Nobrega", email = "isaiasdasilvanobrega@gmail.com" }]

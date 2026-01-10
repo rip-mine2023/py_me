@@ -693,12 +693,18 @@ class path_class:
       Returns:
           bool
       """
-      a = self.FileHunter(relative_path)
+      try:
+        a = self.FileHunter(relative_path)
+      except:
+        a = None
       if a:
         return True
       else:
         user_home = os.path.expanduser("~")
-        b = self.FileHunter_inverse(relative_path, user_home)
+        try:
+          b = self.FileHunter_inverse(relative_path, user_home)
+        except:
+          b = None
         return True if b else False
     class TIMELINE():
         def get_version(path):
