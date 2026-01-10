@@ -679,6 +679,20 @@ class path_class:
         return b
 
     def FileHunter_TrueOrFalse(self, relative_path: str) -> bool:
+      """
+      Checks for the existence of a file using advanced search methods.
+      Args:
+          relative_path(str): The relative path or filename to search for.
+      Behavior:
+          - Uses FileHunter and FileHunter_inverse to determine existence.
+          - Returns True if found, False otherwise.
+      Example:
+          >>> from py_me import os_me
+          >>> os_me.path.FileHunter_TrueOrFalse("config.txt")
+          True  # or False
+      Returns:
+          bool
+      """
       a = self.FileHunter(relative_path)
       if a:
         return True
