@@ -64,6 +64,75 @@ class Details:
         }
     })
 
+    def helper(self, atribute: str = "...") -> str:
+      if atribute == "log_file":
+         if self.language == "en":
+            return "Defines the file where the logging will be done."
+         elif self.language == "pt":
+            return "Define o arquivo onde o registro de log será feito."
+      elif atribute == "timeline_file":
+        if self.language == "en":
+            return "Specifies the file used to store the timeline of file edits."
+        elif self.language == "pt":
+            return "Especifica o arquivo usado para armazenar a linha do tempo das edições de arquivos."
+      elif atribute == "encoding":
+        if self.language == "en":
+            return "Sets the character encoding for file operations."
+        elif self.language == "pt":
+            return "Define a codificação de caracteres para operações de arquivo."
+      elif atribute == "language":
+        if self.language == "en":
+            return "Sets the language for messages and logs."
+        elif self.language == "pt":
+            return "Define o idioma para mensagens e logs."
+      elif atribute == "enable_logging":
+        if self.language == "en":
+            return "Enables or disables logging of operations."
+        elif self.language == "pt":
+            return "Habilita ou desabilita o registro de operações."
+      elif atribute == "enable_rich_traceback":
+        if self.language == "en":
+            return "Enables or disables rich tracebacks for error handling."
+        elif self.language == "pt":
+            return "Habilita ou desabilita rastreamentos ricos para tratamento de erros."
+      elif atribute == "auto_snapshot_on_edit":
+        if self.language == "en":
+            return "Automatically creates snapshots of files before edits."
+        elif self.language == "pt":
+            return "Cria automaticamente snapshots dos arquivos antes das edições."
+      elif atribute == "avoid_duplicate_snapshots":
+        if self.language == "en":
+            return "Prevents creating duplicate snapshots with identical content."
+        elif self.language == "pt":
+            return "Evita a criação de snapshots duplicados com conteúdo idêntico."
+      elif atribute == "timestamp_format":
+        if self.language == "en":
+            return "Specifies the format for timestamps in logs."
+        elif self.language == "pt":
+            return "Especifica o formato para timestamps nos logs."
+      else:
+        if self.language == "en":
+          all_for_help = "log_file: Defines the file where the logging will be done.\n" \
+                         "timeline_file: Specifies the file used to store the timeline of file edits.\n" \
+                         "encoding: Sets the character encoding for file operations.\n" \
+                         "language: Sets the language for messages and logs.\n" \
+                         "enable_logging: Enables or disables logging of operations.\n" \
+                         "enable_rich_traceback: Enables or disables rich tracebacks for error handling.\n" \
+                         "auto_snapshot_on_edit: Automatically creates snapshots of files before edits.\n" \
+                         "avoid_duplicate_snapshots: Prevents creating duplicate snapshots with identical content.\n" \
+                         "timestamp_format: Specifies the format for timestamps in logs."
+          return all_for_help
+        elif self.language == "pt":
+          all_for_help = "log_file: Define o arquivo onde o registro de log será feito.\n" \
+                         "timeline_file: Especifica o arquivo usado para armazenar a linha do tempo das edições de arquivos.\n" \
+                         "encoding: Define a codificação de caracteres para operações de arquivo.\n" \
+                         "language: Define o idioma para mensagens e logs.\n" \
+                         "enable_logging: Habilita ou desabilita o registro de operações.\n" \
+                         "enable_rich_traceback: Habilita ou desabilita rastreamentos ricos para tratamento de erros.\n" \
+                         "auto_snapshot_on_edit: Cria automaticamente snapshots dos arquivos antes das edições.\n" \
+                         "avoid_duplicate_snapshots: Evita a criação de snapshots duplicados com conteúdo idêntico.\n" \
+                         "timestamp_format: Especifica o formato para timestamps nos logs."
+          return all_for_help
     def get_message(self, key: str, *args, **fmt) -> str:
       lang_dict = self._messages.get(self.language, self._messages["en"])
       msg = lang_dict.get(key, key)  # fallback
@@ -275,7 +344,7 @@ class file_class:
           self.details.get_message("start_flow")
         )
         self.inicio_de_fluxo = False
-      if not os.path.exists(new_path):
+    if not os.path.exists(new_path):
         with open(new_path, "x", encoding="utf-8") as filer:
           filer.write(content)
         if self.details.enable_logging:
@@ -284,7 +353,7 @@ class file_class:
           )
           self.numero += 1
           return new_path
-      else:
+    else:
           try:
             raise os_me_error(self.details.get_message("file_exists", ooo = new_path))
           except os_me_error as a:
@@ -601,11 +670,22 @@ class path_class:
     Returns:
         str (full path if found) or None
     """
-      user_home = os.path.expanduser("~")  
-      a = self.FileHunter(user_home)       
-      b = self.FileHunter_inverse(relative_path, a)  
-      return b
-  
+      a = self.FileHunter(relative_path)
+      if a:
+        return a
+      else:
+        user_home = os.path.expanduser("~")
+        b = self.FileHunter_inverse(relative_path, user_home)
+        return b
+
+    def FileHunter_TrueOrFalse(self, relative_path: str) -> bool:
+      a = self.FileHunter(relative_path)
+      if a:
+        return True
+      else:
+        user_home = os.path.expanduser("~")
+        b = self.FileHunter_inverse(relative_path, user_home)
+        return True if b else False
     class TIMELINE():
         def get_version(path):
           """

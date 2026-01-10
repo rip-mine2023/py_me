@@ -4,15 +4,15 @@
 
 ## versão
 
-**3.2.2** - *lançado em 31/12/25*
+**3.3.1** - *lançado em 10/01/26*
 
-**nome** - *para ver seus arquivos se replicarem*(v3) - nova função(1) - debug(1)
+**nome** - *para ver seus arquivos se replicarem*(v4) - nova função(2) - debug(1)
 
 ## mudanças
 
-- adição de Docstrings em os_me
+- novas funções como helper e FilerHunter_TrueOrFalse
 
-- subistituido função "execution_versions" por função "run_version"
+- atualização na logica de FilerHunter_SUPER
 
 ## tk_me
 ### exemplo:
@@ -85,6 +85,7 @@
     - FileHunter
     - FileHunter_inverse
     - FileHunter_SUPER
+    - FileHunter_TrueOrFalse
     * TIMELINE:
         - get_version
         - get_content
@@ -94,7 +95,7 @@
         - run_version
         - del_all
 * details:
-    - @dataclass
+    - helper
 
 ## dependentes
 - pygame
