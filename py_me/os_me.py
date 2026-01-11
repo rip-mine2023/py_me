@@ -275,7 +275,7 @@ class file_class:
         data[path].append(snapshot)
 
 
-      with open(self.details.log_file, "w", encoding="utf-8") as f:
+      with open(self.details.timeline_file, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2)
 
       self.numero_versao += 1

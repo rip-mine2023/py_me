@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='py_me',
-    version='3.3.3',
+    version='3.3.4',
     packages=find_packages(),
     description='Biblioteca com módulos musicais, gráficos e de criação de projetos',
     author='isaias da silva nobrega',
