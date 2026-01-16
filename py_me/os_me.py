@@ -25,6 +25,8 @@ class Details:
 
     custom_logger: Optional[Callable[[str], None]] = None
 
+    silent_FileHunter: bool = False
+
     _messages: dict = field(default_factory=lambda: {
         "en": {
             "start_flow": "[--__START OF FLOW__--]",
@@ -46,10 +48,10 @@ class Details:
         },
         "pt": {
             "start_flow": "[--__INICIO DE FLUXO__--]",
-            "edit": "[EDIT] {}° evento de fluxo: {path} foi editado",
-            "add": "[ADD] {}° evento de fluxo: conteúdo adicionado a {path}",
-            "create": "[CREATE] {}° evento de fluxo: {path} foi criado",
-            "undo": "[UNDO] {}° evento de fluxo: {path} restaurado para versão {}",
+            "edit": "[EDIT] {}° evento de fluxo: {} foi editado",
+            "add": "[ADD] {}° evento de fluxo: conteúdo adicionado a {}",
+            "create": "[CREATE] {}° evento de fluxo: {} foi criado",
+            "undo": "[UNDO] {}° evento de fluxo: {} restaurado para versão {}",
             "error": "[ERROR] {}° evento de fluxo: {}",
             "file_not_found": "{} não existe",
             "file_exists": "{} já existe",
@@ -586,9 +588,10 @@ class path_class:
         a = os.path.join(path, relative_path)
 
         if os.path.exists(a):
+          if not self.details.silent_FileHunter:
             print(f"{relative_path} exist: ✅")
-            self.FilerBust = None
-            return a
+          self.FilerBust = None
+          return a
         else:
             pasta_pai = os.path.dirname(path)
             self.FilerBust = pasta_pai
@@ -598,6 +601,8 @@ class path_class:
                 return self.FileHunter(relative_path)
             else:
                 self.FilerBust = None
+                if self.details.silent_FileHunter:
+                  return None
                 try:
                   raise os_me_error(f"{relative_path} exist: ❌")
                 except os_me_error as a:
@@ -634,7 +639,8 @@ class path_class:
         for d in dirs:
           candidate = os.path.join(root, d)
           if d == relative_path or candidate.endswith(relative_path):
-            print(f"{relative_path} exist: ✅")
+            if not self.details.silent_FileHunter:
+              print(f"{relative_path} exist: ✅")
             return candidate
         # procura por arquivos que batem exatamente ou pelo sufixo
         for f in files:
@@ -643,6 +649,8 @@ class path_class:
             print(f"{relative_path} foi encontrada com sucesso em {root}")
             return candidate
       # não encontrado
+      if self.details.silent_FileHunter:
+        return None
       try:
         raise os_me_error(f"{relative_path} exist: ❌")
       except os_me_error:
