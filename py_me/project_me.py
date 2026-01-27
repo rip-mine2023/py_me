@@ -1,17 +1,38 @@
 import os
+class ProjectMeError(Exception):
+  def __init__(self, exception):
+    super().__init__(exception)
+    self.exception = exception
+
+class NoReturn:
+    pass
 
 class project_me:
-  def criar_projeto():
-    nome = input("qual é o nome do prejeto?: ")
-    altor = input("qual é o seu nome?: ")
-    email = input("qual é o seu email?: ")
-    sim_ou_não = input("tem dependente?: ")
+  """Utilities to scaffold a simple Python project structure."""
+
+  def create_project() -> NoReturn:
+    """
+    Interactive helper to create a basic Python project layout.
+
+    Prompts the user for project metadata and generates:
+      - package directory with __init__.py and a sample module
+      - LICENSE.txt
+      - pyproject.toml
+      - README.MD
+      - setup.py
+
+    Note: This function is interactive (uses input()) and does not return a value.
+    """
+    nome = input("What is the project name?: ")
+    altor = input("What is your name?: ")
+    email = input("What is your email?: ")
+    sim_ou_não = input("Do you have dependencies? (yes/no): ")
     dependentes = []
-    while sim_ou_não == "sim":
-      sim_ou_não = input("tem dependente?: ")
-      dependente = input("coloque o dependente: ")
+    while sim_ou_não == "sim" or sim_ou_não.lower() == "yes":
+      sim_ou_não = input("Do you have more dependencies? (yes/no): ")
+      dependente = input("Enter dependency (e.g. 'requests'): ")
       dependentes.append(dependente)
-    descrição = input("coloque a descrição do projeto: ")
+    descrição = input("Enter the project description: ")
     if not " " in nome:
       pasta_base = os.path.dirname(os.path.abspath(__file__))
       project = os.path.join(pasta_base, f"{nome}_project")
@@ -104,4 +125,4 @@ author_email={email}
         
 
     else:
-      raise ValueError(f"{nome} contem um espaço em branco, poderia por favor remove-lo ou substituilo por '_' ")
+      raise ValueError(f"{nome} contains a whitespace; please remove it or replace it with '_' ")

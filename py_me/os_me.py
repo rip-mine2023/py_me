@@ -7,6 +7,9 @@ from dataclasses import dataclass, field
 from typing import Optional, Callable, Any
 import locale
 
+class NoReturn:
+  pass
+
 @dataclass
 class Details:
     log_file: str = "log.txt"
@@ -112,6 +115,11 @@ class Details:
             return "Specifies the format for timestamps in logs."
         elif self.language == "pt":
             return "Especifica o formato para timestamps nos logs."
+      elif atribute == "silent_FileHunter":
+        if self.language == "en":
+          return "Silences print outputs and os_me_error from all FileHunter methods."
+        elif self.language == "pt":
+          return "Silencia as saídas de print e os_me_error de todos os métodos FileHunter"
       else:
         if self.language == "en":
           all_for_help = "log_file: Defines the file where the logging will be done.\n" \
@@ -122,7 +130,8 @@ class Details:
                          "enable_rich_traceback: Enables or disables rich tracebacks for error handling.\n" \
                          "auto_snapshot_on_edit: Automatically creates snapshots of files before edits.\n" \
                          "avoid_duplicate_snapshots: Prevents creating duplicate snapshots with identical content.\n" \
-                         "timestamp_format: Specifies the format for timestamps in logs."
+                         "timestamp_format: Specifies the format for timestamps in logs.\n" \
+                         "silent_FileHunter: Silences print outputs and os_me_error from all FileHunter methods."
           return all_for_help
         elif self.language == "pt":
           all_for_help = "log_file: Define o arquivo onde o registro de log será feito.\n" \
@@ -133,7 +142,8 @@ class Details:
                          "enable_rich_traceback: Habilita ou desabilita rastreamentos ricos para tratamento de erros.\n" \
                          "auto_snapshot_on_edit: Cria automaticamente snapshots dos arquivos antes das edições.\n" \
                          "avoid_duplicate_snapshots: Evita a criação de snapshots duplicados com conteúdo idêntico.\n" \
-                         "timestamp_format: Especifica o formato para timestamps nos logs."
+                         "timestamp_format: Especifica o formato para timestamps nos logs.\n" \
+                         "silent_FileHunter: Silencia as saídas de print e os_me_error de todos os métodos FileHunter"
           return all_for_help
     def get_message(self, key: str, *args, **fmt) -> str:
       lang_dict = self._messages.get(self.language, self._messages["en"])
@@ -159,7 +169,7 @@ class Details:
             return msg
       return msg
 
-class os_me_error(Exception):
+class OsMeError(Exception):
   def __init__(self, exception):
     super().__init__(exception)
     self.exception = exception
@@ -168,7 +178,7 @@ class utilidades:
     def __init__(self, details: Details):
         self.details = details
     
-    def registrar_log(self, mensagem: str):
+    def registrar_log(self, mensagem: str) -> NoReturn:
         if not self.details.enable_logging:
             return
         if self.details.custom_logger:
@@ -191,7 +201,7 @@ class file_class:
     if self.details.enable_rich_traceback:
       install()
 
-  def replace(self, path: str, content: str) -> None:
+  def replace(self, path: str, content: str) -> NoReturn:
     """
     Replaces all the content of the specified file with new content, or undoes to a previous version by specifying "undo X", where "X" is the file version number.
 
@@ -222,10 +232,10 @@ class file_class:
 
     if not os.path.exists(path):
         try:
-            raise os_me_error(
+            raise OsMeError(
                self.details.get_message("file_not_found", caminho = path)
             )
-        except os_me_error as a:
+        except OsMeError as a:
             if self.details.enable_rich_traceback:
               console = Console()
               console.print_exception()
@@ -305,8 +315,8 @@ class file_class:
                         self.numero += 1
                         return
               try:
-                 raise os_me_error(self.details.get_message("file_not_found", caminho = path))
-              except os_me_error:
+                 raise OsMeError(self.details.get_message("file_not_found", caminho = path))
+              except OsMeError:
                 if self.details.enable_logging:
                   self.ultilidades.registrar_log(
                     self.details.get_message("error", number = self.numero, conteudo = self.details.get_message("file_not_found", caminho = path))
@@ -357,8 +367,8 @@ class file_class:
           return new_path
     else:
           try:
-            raise os_me_error(self.details.get_message("file_exists", ooo = new_path))
-          except os_me_error as a:
+            raise OsMeError(self.details.get_message("file_exists", ooo = new_path))
+          except OsMeError as a:
             if self.details.enable_rich_traceback == True:
               console = Console()
               console.print_exception()
@@ -368,7 +378,7 @@ class file_class:
               )
               self.numero += 1
 
-  def add(self, path: str, content: str) -> None:
+  def add(self, path: str, content: str) -> NoReturn:
     """
     Appends new content to the end of an existing file.
 
@@ -441,8 +451,8 @@ class file_class:
         data[path].append(snapshot)
       if not os.path.exists(path):
         try:
-          raise os_me_error(self.details.get_message("file_not_found", caminho = path))
-        except os_me_error:
+          raise OsMeError(self.details.get_message("file_not_found", caminho = path))
+        except OsMeError:
           if self.details.enable_rich_traceback:
             console = Console()
             console.print_exception()
@@ -457,7 +467,7 @@ class file_class:
 
         self.numero_versao += 1
 
-  def execution_sequence(self, paths: list, ignore_error: bool = False, list_erros: bool = False) -> None:
+  def execution_sequence(self, paths: list, ignore_error: bool = False, list_erros: bool = False) -> NoReturn:
     """
     Executes Python code from one or more files, with options to ignore errors or list them.
 
@@ -513,8 +523,8 @@ class file_class:
                  self.numero +=1
           else:
             try:
-              raise os_me_error(self.details.get_message("file_not_found", arquivo = filer))
-            except os_me_error:
+              raise OsMeError(self.details.get_message("file_not_found", arquivo = filer))
+            except OsMeError:
               if self.details.enable_rich_traceback:
                 console = Console()
                 console.print_exception()
@@ -535,8 +545,8 @@ class file_class:
             self.lista_de_erros.clear()
       else:
         try:
-          raise os_me_error(self.details.get_message("error_list"))
-        except os_me_error:
+          raise OsMeError(self.details.get_message("error_list"))
+        except OsMeError:
           if self.details.enable_rich_traceback:
             console = Console()
             console.print_exception()
@@ -547,8 +557,8 @@ class file_class:
             self.numero += 1
     else:
       try:
-        raise os_me_error(self.details.get_message("error_not_list", lista = paths))
-      except os_me_error:
+        raise OsMeError(self.details.get_message("error_not_list", lista = paths))
+      except OsMeError:
         if self.details.enable_rich_traceback:
           console = Console()
           console.print_exception()
@@ -604,8 +614,8 @@ class path_class:
                 if self.details.silent_FileHunter:
                   return None
                 try:
-                  raise os_me_error(f"{relative_path} exist: ❌")
-                except os_me_error as a:
+                  raise OsMeError(f"{relative_path} exist: ❌")
+                except OsMeError as a:
                   if self.details.enable_rich_traceback:
                     console = Console()
                     console.print_exception()
@@ -652,8 +662,8 @@ class path_class:
       if self.details.silent_FileHunter:
         return None
       try:
-        raise os_me_error(f"{relative_path} exist: ❌")
-      except os_me_error:
+        raise OsMeError(f"{relative_path} exist: ❌")
+      except OsMeError:
         if self.details.enable_rich_traceback:
           console = Console()
           console.print_exception()
@@ -715,7 +725,7 @@ class path_class:
           b = None
         return True if b else False
     class TIMELINE():
-        def get_version(path):
+        def get_version(path: str) -> list:
           """
     Retrieves the list of version numbers for a file's history.
 
@@ -746,7 +756,7 @@ class path_class:
                   for snapshot in data[path]:
                       versões.append(snapshot["versao"])
           return versões
-        def get_content(path):
+        def get_content(path: str) -> list:
           """
     Retrieves the list of contents from all versions of a file's history.
 
@@ -777,7 +787,7 @@ class path_class:
                   for snapshot in data[path]:
                       conteúdos.append(snapshot["conteudo"])
           return conteúdos
-        def get_TIMELINE(path):
+        def get_TIMELINE(path: str) -> list:
           """
     Retrieves the full timeline (snapshots) for a file.
 
@@ -809,13 +819,13 @@ class path_class:
                       timeline.append(snapshot)
               else:
                 try:
-                  raise os_me_error(f"no history for {path}")
-                except:
+                  raise OsMeError(f"no history for {path}")
+                except OsMeError:
                   if pathh.details.enable_rich_traceback:
                     console = Console()
                     console.print_exception()
           return timeline
-        def show_TIMELINE(path):
+        def show_TIMELINE(path: str) -> NoReturn:
           """
     Prints the full timeline details for a file.
 
@@ -846,19 +856,19 @@ class path_class:
                       print(f"Versão: {snapshot['versao']}, Timestamp: {snapshot['timestamp']}\nConteúdo:\n{snapshot['conteudo']}\n{'-'*40}")
               else:
                 try:
-                  raise os_me_error(f"no history for {path}")
-                except os_me_error:
+                  raise OsMeError(f"no history for {path}")
+                except OsMeError:
                   if pathh.details.enable_rich_traceback:
                     console = Console()
                     console.print_exception()
           else:
             try:
-              raise os_me_error("no history")
-            except os_me_error:
+              raise OsMeError("no history")
+            except OsMeError:
                 if pathh.details.enable_rich_traceback:
                   console = Console()
                   console.print_exception()
-        def del_TIMELINE(path):
+        def del_TIMELINE(path: str) -> NoReturn:
           """
     Deletes the history for a specific file from the timeline.
 
@@ -891,20 +901,20 @@ class path_class:
                   print(f"history of {path} was deleted")
               else:
                 try:
-                  raise os_me_error(f"no history for {path}")
-                except os_me_error:
+                  raise OsMeError(f"no history for {path}")
+                except OsMeError:
                   if pathh.details.enable_rich_traceback:
                     console = Console()
                     console.print_exception()
           else:
             try:
-              raise os_me_error("Nenhum histórico disponível.")
-            except os_me_error:
+              raise OsMeError("Nenhum histórico disponível.")
+            except OsMeError:
                 if pathh.details.enable_rich_traceback:
                   console = Console()
                   console.print_exception()
         @staticmethod
-        def run_version(path: str, version: int, capture_output: bool = True):
+        def run_version(path: str, version: int, capture_output: bool = True) -> dict | None:
             """
     Executes the code from a specific version of a file's history.
 
@@ -955,8 +965,8 @@ class path_class:
                                 return {"success": True, "output": output.getvalue(), "error": error.getvalue()}
                             except Exception as e:
                                 try:
-                                  raise os_me_error({"success": False, "output": output.getvalue(), "error": str(e)})
-                                except os_me_error as f:
+                                  raise OsMeError({"success": False, "output": output.getvalue(), "error": str(e)})
+                                except OsMeError as f:
                                    if pathh.details.enable_rich_traceback:
                                       cursor = Console
                                       cursor.print_exception(f)
@@ -966,7 +976,7 @@ class path_class:
                         return None
                 
             raise ValueError(f"Versão {version} não encontrada")
-        def del_all():
+        def del_all() -> NoReturn:
           """
     Deletes all history from the timeline file.
 

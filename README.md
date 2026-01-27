@@ -1,108 +1,107 @@
 # py_me
 
-**py_me** é uma biblioteca Python que oferece módulos para manipulação de sons (`music_me`) e interfaces gráficas com Tkinter (`tk_me`).
+**py_me** is a Python library that provides modules for sound manipulation (`music_me`) and Tkinter GUI helpers (`tk_me`).
 
-## versão
+## Version
 
-**3.3.5** - *lançado em 10/01/26*
+**3.4.1** - *released on 2026-01-27*
 
-**nome** - *para ver seus arquivos se replicarem*(v8) - nova função(2) - debug(5)
+**name** - *now with a new look* 
 
-## mudanças
+## Changes
 
-- novas funções como helper e FilerHunter_TrueOrFalse
-
-- atualização na logica de FilerHunter_SUPER
+- full translation into English
+- Adding new "accessories" to make py_me prettier.
 
 ## tk_me
-### exemplo:
+### Example:
 ```python
-    from py_me import tk_me
+from py_me import tk_me
 
-    aaa = tk_me.apenas_criar("oi", "100x100")
-    def sair():
-        aaa.destroy()
-    tk_me.botão("sair", 0, 0, "Arial", 14, sair)
-    aaa.mainloop()
+win = tk_me.apenas_criar("hi", "100x100")
+def exit_app():
+    win.destroy()
+tk_me.botão("exit", 0, 0, "Arial", 14, exit_app)
+win.mainloop()
 ```
-### funções
-- tk_import(nome_janela, tamanho_janela, arquivo_import)
-- apenas_criar(nome_janela, tamanho_janela)
-- label(texto, X1, Y1, fonte, tamanho)
-- botão(texto, X1, Y1, fonte, tamanho, comando)
-- janela_de_Texto(tamanho_X, tamanho_y, local_X, local_y)
-- janela_error()
-- destruir_objetos(objeto)
-- tk_import_tk(nome_janela1, arquivo_tk, texto_label, texto_botão)
-- slider(num_min, num_max, comando, X, Y)
+### Functions
+- tk_import(window_name, window_size, import_file)
+- apenas_criar(window_name, window_size)  (alias for create_window)
+- label(text, X, Y, font, size)  (alias for create_label)
+- botão(text, X, Y, font, size, command)  (alias for create_button)
+- janela_de_Texto(height, width, X, Y)  (alias for create_text_window)
+- janela_error()  (alias for error_window)
+- destruir_objetos(widget)  (alias for destroy_widget)
+- tk_import_tk(window_name, tk_file, label_text, button_text)  (alias for import_tk_window)
+- slider(min, max, command, X, Y)  (alias for create_slider)
 
 ## music_me
-### exemplo
+### Example:
 ```python
-    from py_me import music_me
+from py_me import music_me
 
-    music_me.trilha_sonora_inloop(2, "minha\\batida.mp3")
-    aaa = music_me.elemento_musical(1, "meu\\som.wav", 12)
-    music_me.dell(aaa, 10)
+music_me.trilha_sonora_inloop(2, "my\\beat.mp3")
+elem = music_me.elemento_musical(1, "my\\sound.wav", 12)
+music_me.dell(elem, 10)
 ```
-    
-### funções
-- trilha_sonora_inloop(velocidade, arquivo)
-- elemento_musical(velocidade, arquivo, tempo_a_esperar=0)
-- elemento_musical_entonado(velocidade, entonacao, arquivo, tempo_a_esperar=0)
-- dell(elemento, tempo_após_o_inicio_da_reprodução_para_o_del)
-- stop(tempo)
-- volume_elemento(som, volume, tempo)
-- volume_geral(volume,  tempo)
+### Functions
+- trilha_sonora_inloop(speed, file)  (alias loop_soundtrack)
+- elemento_musical(speed, file, wait_time=0)  (alias musical_element)
+- elemento_musical_entonado(speed, pitch, file, wait_time=0)  (alias pitched_musical_element)
+- dell(element, seconds_after_start)  (alias stop_element_after)
+- stop(delay_seconds)  (alias stop_all_after)
+- volume_elemento(element, volume, delay)  (alias set_element_volume)
+- volume_geral(volume, delay)  (alias set_master_volume)
 
 ## project_me
-### exemplo
+### Example:
 ```python
-    from py_me import project_me
+from py_me import project_me
 
-    project_me.criar_projeto()
+project_me.criar_projeto()
 ```
 
-### função
-- criar_projeto()
+### Function
+- criar_projeto()  (alias create_project)
 
 ## os_me
-### exemplo
+### Example:
 ```python
-    from py_me import os_me
-    a = os_me.path.FileHunter("exemplo.py")
-    b = os_me.path.FileHunter("segundo\\exemplo.py")
-    os_me.file..execution_sequence([a, b], False, False)
+from py_me import os_me
+a = os_me.path.FileHunter("example.py")
+b = os_me.path.FileHunter("second\\example.py")
+os_me.file.execution_sequence([a, b], False, False)
 ```
 
-### funções
-* file:
-    - def replace
-    - def create
-    - def add
-    - def execution_sequence
-* path:
-    - FileHunter
-    - FileHunter_inverse
-    - FileHunter_SUPER
-    - FileHunter_TrueOrFalse
-    * TIMELINE:
-        - get_version
-        - get_content
-        - get_TIMELINE
-        - show_TIMELINE
-        - del_TIMELINE
-        - run_version
-        - del_all
-* details:
-    - helper
+### API overview
+- file:
+  - replace
+  - create
+  - add
+  - execution_sequence
+- path:
+  - FileHunter
+  - FileHunter_inverse
+  - FileHunter_SUPER
+  - FileHunter_TrueOrFalse
+  - TIMELINE:
+    - get_version
+    - get_content
+    - get_TIMELINE
+    - show_TIMELINE
+    - del_TIMELINE
+    - run_version
+    - del_all
+- details:
+  - helper
 
-## dependentes
+## Dependencies
 - pygame
 - pydub
-    - FFmpeg
+  - FFmpeg
 
-## Instalação
+## Installation
 
 ```bash
 pip install py-me
+```

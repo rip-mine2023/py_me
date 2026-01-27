@@ -5,45 +5,52 @@ import time
 import tempfile
 from pydub import AudioSegment
 
-class alxiliar:
+class NoReturn:
+    pass
+
+class Auxiliary:
     def __init__(self):
         self.sound = None
         self.thread = None
 
+# backward-compatible alias
+alxiliar = Auxiliary
+
 class music_me:
     """
-    criada para executar e manipular aldio para qualquer proposito (apesar do nome)
+    Created to play and manipulate audio for any purpose (despite the name).
 
-    defs:
-        trilha_sonora_inloop(velocidade, arquivo)
-        elemento_musical(velocidade, arquivo, tempo_a_esperar=0)
-        elemento_musical_entonado(velocidade, entonacao, arquivo, tempo_a_esperar=0)
-        dell(elemento, tempo_após_o_inicio_da_reprodução_para_o_del)
+    Methods:
+        loop_soundtrack(speed, file)
+        musical_element(speed, file, wait_time=0)
+        pitched_musical_element(speed, pitch, file, wait_time=0)
+        stop_element_after(element, seconds_after_start)
 
     """
     pygame.mixer.init()
-    def trilha_sonora_inloop(velocidade, arquivo):
-        """
-        Toca uma música em loop infinito com alteração de velocidade.
-        
-        Args:
-            velocidade(int) (a velocidade ao qual o arquivo será tocado)
-            arquivo(str) (exatamente o arquivo que será tocado)
 
-        comportamento:
-            - toca um arquivo em loop
-            - pode ou não modificar sua velocidade
-        exemplo:
-            >>> from py_me import music_me
-            >>> music_me.trilha_sonora_inloop(2, "minha batida.mp3")
-        returns:
-            pygame.mixer.Sound(temp_path) (som a ser reproduzido, possibilitando modificações leves)
+    def loop_soundtrack(speed: int, file: str) -> Auxiliary:
         """
-        som = alxiliar()
+        Play a soundtrack in an infinite loop with optional speed change.
+
+        Args:
+            speed (int): playback speed multiplier.
+            file (str): the exact file to play.
+
+        Behavior:
+            - plays a file in loop
+            - may modify its speed
+        Example:
+            >>> from py_me import music_me
+            >>> music_me.loop_soundtrack(2, "my_beat.mp3")
+        Returns:
+            Auxiliary: object containing pygame Sound and thread for light control
+        """
+        aux = Auxiliary()
         def player():
-            audio = AudioSegment.from_file(arquivo)
+            audio = AudioSegment.from_file(file)
             audio = audio._spawn(audio.raw_data, overrides={
-                "frame_rate": int(audio.frame_rate * velocidade)
+                "frame_rate": int(audio.frame_rate * speed)
             }).set_frame_rate(audio.frame_rate)
 
             temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".wav")
@@ -51,204 +58,192 @@ class music_me:
             temp_file.close()
             audio.export(temp_path, format="wav")
 
-            som.sound = pygame.mixer.Sound(temp_path)
-            som.sound.play(loops=-1)
-            
+            aux.sound = pygame.mixer.Sound(temp_path)
+            aux.sound.play(loops=-1)
 
-            print(f"Tocando {arquivo} em loop (velocidade {velocidade}x)")
-                
+            print(f"Playing {file} in loop (speed {speed}x)")
 
             while True:
                 time.sleep(0.1)
 
+        th = threading.Thread(target=player, daemon=True)
+        aux.thread = th
+        th.start()
+        return aux
 
-        aaa = threading.Thread(target=player, daemon=True)
-        som.thread = aaa
-        aaa.start()
-        return som
-
-    def elemento_musical(velocidade, arquivo, tempo_a_esperar=0):
+    def musical_element(speed: int, file: str, wait_time: int =0) -> Auxiliary:
         """
-        Toca um elemento musical após um tempo definido.
-        
+        Play a musical element after an optional wait time.
+
         Args:
-            velocidade(int) (a velocidade de reprodução do arquivo)
-            arquivo(str) (o arquivo a ser tocado)
-            tempo_a_espera(int) (o segundo exato, considerando deis de o inicio da execução, que o arquivo irá tocar)
+            speed (int): playback speed multiplier.
+            file (str): file to play.
+            wait_time (int): seconds to wait after script start before playing.
 
-        comportamento:
-            - toca um arquivo
-            - pode ou não mudar sua velocidade
-            - espera determinado tempo para tocar o som
-        
-        exemplo:
+        Behavior:
+            - plays a file
+            - may change its speed
+            - can wait a specified time before playback
+        Example:
             >>> from py_me import music_me
-            >>> music_me.elemento_musical(1, "meu_som.mp3", 21) #executa depois de vinte e um segundos após iniciar o codigo
-
-        returns:
-            pygame.mixer.Sound(temp_path) (som a ser reproduzido, possibilitando modificações leves)
+            >>> music_me.musical_element(1, "my_sound.mp3", 21)
+        Returns:
+            Auxiliary: object containing pygame Sound and thread
         """
-        som = alxiliar()
+        aux = Auxiliary()
         def player():
-                if tempo_a_esperar > 0:
-                    time.sleep(tempo_a_esperar)
+            if wait_time > 0:
+                time.sleep(wait_time)
 
-                audio = AudioSegment.from_file(arquivo)
-                audio = audio._spawn(audio.raw_data, overrides={
-                    "frame_rate": int(audio.frame_rate * velocidade)
-                }).set_frame_rate(audio.frame_rate)
+            audio = AudioSegment.from_file(file)
+            audio = audio._spawn(audio.raw_data, overrides={
+                "frame_rate": int(audio.frame_rate * speed)
+            }).set_frame_rate(audio.frame_rate)
 
-                temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".wav")
-                temp_path = temp_file.name
-                temp_file.close()
-                audio.export(temp_path, format="wav")
+            temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".wav")
+            temp_path = temp_file.name
+            temp_file.close()
+            audio.export(temp_path, format="wav")
 
-                som.sound = pygame.mixer.Sound(temp_path)
-                som.sound.play()
+            aux.sound = pygame.mixer.Sound(temp_path)
+            aux.sound.play()
 
+            print(f"Playing {file} (speed {speed}x) after {wait_time}s")
 
-                print(f"Tocando {arquivo} (velocidade {velocidade}x) após {tempo_a_esperar}s")
+            time.sleep(audio.duration_seconds)
+            os.remove(temp_path)
 
-                time.sleep(audio.duration_seconds)
-                os.remove(temp_path)
+        th = threading.Thread(target=player, daemon=True)
+        aux.thread = th
+        th.start()
+        return aux
 
-        aaa = threading.Thread(target=player, daemon=True)
-        som.thread = aaa
-        aaa.start()
-        return som
-
-    def elemento_musical_entonado(velocidade, entonacao, arquivo, tempo_a_esperar=0):
+    def pitched_musical_element(speed: int, pitch: int, file: str, wait_time: int=0) -> Auxiliary:
         """
-        Toca um elemento musical com velocidade e entonação ajustáveis.
-        
+        Play a musical element with adjustable speed and pitch.
+
         Args:
-            velocidade(int) (a velocidade que o arquivo será reproduzido)
-            entonação(int) (a entonação que o arquivo irá tocar)
-            arquivo(str) (o arquivo a ser reproduzido)
-            tempo_a_esperar(int) (o segundo exato, considerando deis de o inicio da execução, que o arquivo irá tocar)
-        
-        comportamento:
-            - toca um arquivo de som
-            - pode ou não alterar sua velocidade
-            - pode ou não alterar sua entonação
-            - toca ele somente depois de determinado tempo
-        
-        exemplo:
+            speed (int): playback speed multiplier.
+            pitch (int): pitch multiplier.
+            file (str): file to play.
+            wait_time (int): seconds to wait before playback.
+
+        Behavior:
+            - plays a sound file
+            - may change speed and/or pitch
+            - starts after specified wait time
+        Example:
             >>> from py_me import music_me
-            >>> music_me.elemento_musical_entonado(1, 3, "meu_som.wav", 12) #executa depois de doze segundos após iniciar o codigo
-        
-        returns:
-            pygame.mixer.Sound(temp_path) (som a ser reproduzido, possibilitando modificações leves)
+            >>> music_me.pitched_musical_element(1, 3, "my_sound.wav", 12)
+        Returns:
+            Auxiliary: object containing pygame Sound and thread
         """
-        som = alxiliar()
+        aux = Auxiliary()
         def player():
-                if tempo_a_esperar > 0:
-                    time.sleep(tempo_a_esperar)
+            if wait_time > 0:
+                time.sleep(wait_time)
 
-                audio = AudioSegment.from_file(arquivo)
-                audio = audio._spawn(audio.raw_data, overrides={
-                    "frame_rate": int(audio.frame_rate * velocidade * entonacao)
-                }).set_frame_rate(audio.frame_rate)
+            audio = AudioSegment.from_file(file)
+            audio = audio._spawn(audio.raw_data, overrides={
+                "frame_rate": int(audio.frame_rate * speed * pitch)
+            }).set_frame_rate(audio.frame_rate)
 
-                temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".wav")
-                temp_path = temp_file.name
-                temp_file.close()
-                audio.export(temp_path, format="wav")
+            temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".wav")
+            temp_path = temp_file.name
+            temp_file.close()
+            audio.export(temp_path, format="wav")
 
-                som.sound = pygame.mixer.Sound(temp_path)
-                som.sound.play()
+            aux.sound = pygame.mixer.Sound(temp_path)
+            aux.sound.play()
 
+            print(f"Playing {file} (speed {speed}x, pitch {pitch}x)")
 
+            time.sleep(audio.duration_seconds)
+            os.remove(temp_path)
 
-                print(f"Tocando {arquivo} (velocidade {velocidade}x, entonação {entonacao}x)")
+        th = threading.Thread(target=player, daemon=True)
+        aux.thread = th
+        th.start()
+        return aux
 
-                time.sleep(audio.duration_seconds)
-                os.remove(temp_path)
-        aaa = threading.Thread(target=player, daemon=True)
-        som.thread = aaa
-        aaa.start()
-        return som
-    def dell(som, tempo_após_o_inicio_da_reprodução_para_o_del):
+    def stop_element_after(element: Auxiliary, seconds_after_start: int) -> NoReturn:
         """
-        Interrompe a reprodução do elemento após 'tempo' segundos.
+        Stop playback of an element after a specified number of seconds.
 
         Args:
-        elemento(str) (o elemento a ser remoivido)
-        tempo_após_o_inicio_da_reprodução_para_o_del(int) (o segundo exato onde o elemento deve parar de ser tocado, considerando o inicio da reprodução do elemento)
-        
-        comportamento:
-            - interrompe um elemento musical depois do tempo indicado
-        
-        exemplo:
+            element (Auxiliary): the element to stop.
+            seconds_after_start (int): seconds after start when the element should stop.
+
+        Behavior:
+            - stops the given musical element after the specified time
+        Example:
             >>> from py_me import music_me
-            >>> aaa = music_me.elemento_musical(1, "som.wav", 12)
-            >>> music_me.dell(aaa, 23) #vinte e três segundos
-        obs:
-            certifique-se que a variavel a ser deletada sejá um elemento musical
-        
-        returns:
+            >>> elem = music_me.musical_element(1, "sound.wav", 12)
+            >>> music_me.stop_element_after(elem, 23)
+        Returns:
             None
         """
-        def parar():
+        def stop() -> NoReturn:
+            """stop👍"""
             try:
-                if hasattr(som, "sound") and som.sound:
-                    som.sound.stop()
-                    print("Reprodução interrompida automaticamente.")
+                if hasattr(element, "sound") and element.sound:
+                    element.sound.stop()
+                    print("Playback stopped automatically.")
             except Exception as e:
-                print(f"Erro ao tentar parar o elemento: {e}")
+                print(f"Error trying to stop the element: {e}")
 
-        threading.Timer(tempo_após_o_inicio_da_reprodução_para_o_del, parar).start()
-    def stop(tempo):
+        threading.Timer(seconds_after_start, stop).start()
+
+    def stop_all_after(delay_seconds: float) -> NoReturn:
         """
-        para tudo que está em reprodução de uma vez
+        Stop all currently playing sounds after a delay.
 
         Args:
-            tempo(float) (o tempo após o inicio do programa)
-        
-        comportamento:
-            - interrompe todos os sons executados depois do tempo determinado
+            delay_seconds (float): seconds after program start to stop everything.
 
-        exemplo:
+        Behavior:
+            - stops all sounds after the given delay
+        Example:
             >>> from py_me import music_me
-            >>> music_me.trilha_sonora_inloop(2, "minha\\batida.mp3")
-            >>> music_me.elemento_musical(1, "meu\\elemento.wav", 2)
-            >>> music_me.stop(20)
-        returns:
+            >>> music_me.loop_soundtrack(2, "beat.mp3")
+            >>> music_me.musical_element(1, "element.wav", 2)
+            >>> music_me.stop_all_after(20)
+        Returns:
             None
         """
-        def para():
+        def stop_all() -> NoReturn:
+            """stop all 👍"""
             try:
                 if pygame.mixer.get_init() and pygame.mixer.get_busy():
                     pygame.mixer.stop()
-                    print("Tudo interrompido")
+                    print("All playback stopped")
                 else:
-                    print("Não há sons tocando")
+                    print("No sounds are playing")
             except Exception as e:
-                print("Erro inesperado aconteceu:")
+                print("An unexpected error occurred:")
                 print(e)
-    
-        threading.Timer(tempo, para).start()
-    def volume_geral(volume,  tempo):
+
+        threading.Timer(delay_seconds, stop_all).start()
+
+    def set_master_volume(volume: float, delay: float) -> NoReturn:
         """
-        Ajusta o volume geral de todos os sons.
+        Set the master volume for all sounds after a delay.
 
         Args:
-            volume(float) (o volume desejado, entre 0.0 e 1.0)
-            tempo(float) (o tempo após o inicio do programa)
-        
-        comportamento:
-            - ajusta o volume geral de todos os sons depois do tempo determinado
+            volume (float): desired volume between 0.0 and 1.0.
+            delay (float): seconds after program start to apply the volume.
 
-        exemplo:
+        Behavior:
+            - adjusts master volume after delay
+        Example:
             >>> from py_me import music_me
-            >>> music_me.trilha_sonora_inloop(2, "minha\\batida.mp3")
-            >>> music_me.elemento_musical(1, "meu\\elemento.wav", 2)
-            >>> music_me.volume_geral(0.5, 20) #ajusta o volume para 50% depois de vinte segundos
-        
-          returns:
+            >>> music_me.loop_soundtrack(2, "beat.mp3")
+            >>> music_me.musical_element(1, "element.wav", 2)
+            >>> music_me.set_master_volume(0.5, 20)
+        Returns:
             None
         """
-        def ajusta_volume():
+        def adjust():
             try:
                 if 0.0 <= volume <= 1.0:
                     for i in range(pygame.mixer.get_num_channels()):
@@ -257,47 +252,47 @@ class music_me:
                             snd = ch.get_sound()
                             if snd:
                                 snd.set_volume(volume)
-                    print(f"Volume geral ajustado para {volume * 100}%")
+                    print(f"Master volume set to {volume * 100}%")
                 else:
-                    print("Volume deve estar entre 0.0 e 1.0")
+                    print("Volume must be between 0.0 and 1.0")
             except Exception as e:
-                print("Erro inesperado aconteceu:")
+                print("An unexpected error occurred:")
                 print(e)
-    
-        threading.Timer(tempo, ajusta_volume).start()
-    def volume_elemento(som, volume, tempo):
+
+        threading.Timer(delay, adjust).start()
+
+    def set_element_volume(element: Auxiliary, volume: float, delay: float) -> NoReturn:
         """
-        Ajusta o volume de um elemento especifico.
+        Set the volume of a specific element after a delay.
 
         Args:
-            elemento(pygame.mixer.Sound) (o elemento a ter o volume ajustado)
-            volume(float) (o volume desejado, entre 0.0 e 1.0)
-            tempo(float) (o tempo após o inicio do programa)
+            element (Auxiliary): the element whose volume will be adjusted.
+            volume (float): desired volume between 0.0 and 1.0.
+            delay (float): seconds after program start to apply the volume.
 
-        comportamento:
-            - ajusta o volume de um elemento especifico depois do tempo determinado
-
-        exemplo:
+        Behavior:
+            - adjusts the volume of a specific element after delay
+        Example:
             >>> from py_me import music_me
-            >>> aaa = music_me.elemento_musical(1, "meu\\elemento.wav", 2)
-            >>> music_me.volume_elemento(aaa, 0.3, 20) #ajusta o volume do elemento aaa para 30% depois de vinte segundos
-        returns:
+            >>> elem = music_me.musical_element(1, "element.wav", 2)
+            >>> music_me.set_element_volume(elem, 0.3, 20)
+        Returns:
             None
         """
-        def ajusta_volume():
+        def adjust():
             try:
-                if hasattr(som, "sound") and som.sound:
+                if hasattr(element, "sound") and element.sound:
                     if 0.0 <= volume <= 1.0:
                         for i in range(pygame.mixer.get_num_channels()):
                             channel = pygame.mixer.Channel(i)
-                            if channel.get_sound() == som.sound:
+                            if channel.get_sound() == element.sound:
                                 channel.set_volume(volume)
-                        print(f"Volume do elemento ajustado para {volume * 100}%")
+                        print(f"Element volume set to {volume * 100}%")
                     else:
-                        print("Volume deve estar entre 0.0 e 1.0")
+                        print("Volume must be between 0.0 and 1.0")
                 else:
-                    print("Elemento inválido ou não está tocando")
+                    print("Invalid element or not playing")
             except Exception as e:
-                print("Erro inesperado aconteceu:")
+                print("An unexpected error occurred:")
                 print(e)
-        threading.Timer(tempo, ajusta_volume).start()
+        threading.Timer(delay, adjust).start()
