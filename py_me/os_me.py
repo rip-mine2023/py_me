@@ -6,6 +6,10 @@ import json
 from dataclasses import dataclass, field
 from typing import Optional, Callable, Any
 import locale
+import inspect
+import re
+from typing import Dict, Union, Optional
+from pathlib import Path
 
 class NoReturn:
   pass
@@ -517,7 +521,7 @@ class file_class:
                     self.utilidades.registrar_log(
                       self.details.get_message("exec_error", aaa = filer, tipo = err)
                     )
-                  raise err
+                  raise OsMeError(self.details.get_message("error", numero = self.numero,  error = err)) from err
               finally:
                 if self.details.enable_logging:
                  self.numero +=1
@@ -1000,7 +1004,7 @@ class path_class:
           
       
 class os_me:
-   """os_me is a sophisticated audio manipulation module
+  """os_me is a sophisticated audio manipulation module
   that features a modifiable language,
   logging system, and versioning.
   
@@ -1009,7 +1013,135 @@ class os_me:
   - file
   - path
     -TIMELINE
+  
+  def:
+  - create_dir_tree
   """
-   details = Details()
-   file = file_class(details)
-   path = path_class(details)
+  details = Details()
+  file = file_class(details)
+  path = path_class(details)
+
+def create_dir_tree(
+    tree: Dict[str, Union[Dict, None, str, Path]],
+    name: Optional[str] = None,
+    level: int = 0,
+    root: Optional[Path | str] = None,
+    *,
+    allow_unsafe_names: bool = False,      # default False
+    create_leaf_files: bool = False,      
+    exist_ok: bool = True,
+) -> Path:
+    """
+    Creates a directory tree (folder structure) on the filesystem from a nested dictionary.
+
+    Args:
+        tree (Dict[str, Union[Dict, None, str, Path]]): Nested dictionary representing the folder structure.
+            - Keys become folder/file names
+            - Values that are dicts become subfolders (recursive)
+            - Values that are None/str/Path become leaf files (if create_leaf_files=True)
+        name (Optional[str]): Name of the root folder. If None, tries to guess the variable name using inspect.
+        level (int, optional): Current recursion depth (internal use, default=0).
+        root (Optional[Path | str]): Base path where the tree will be created. Defaults to current working directory.
+        allow_unsafe_names (bool, optional): Allow raw/unsafe folder names (potential path traversal risk). Default=False.
+        create_leaf_files (bool, optional): Create actual files for leaf nodes (None → empty file, str → file with content). Default=False.
+        exist_ok (bool, optional): If True, won't raise error if directories already exist. Default=True.
+
+    Behavior:
+        - Sanitizes folder names by default to prevent path traversal and invalid characters
+        - Attempts to infer root folder name from caller's local variable if 'nome' is None
+        - Creates directories recursively following the dict structure
+        - Optionally creates empty or content-filled files for non-dict leaf values
+        - Raises RuntimeError if root directory cannot be created
+        - Prints warnings on per-item creation failures (but continues)
+
+    Example:
+        >>> structure = {
+        ...     "projeto": {
+        ...         "src": {"main.py": "# Entrypoint"},
+        ...         "tests": {}
+        ...     }
+        ... }
+        >>> create_dir_tree(structure, create_leaf_files=True)
+        PosixPath('/current/dir/projeto')
+
+        # Resulting structure:
+        # projeto/
+        # ├── src/
+        # │   └── main.py     ← file with content "# Entrypoint"
+        # └── tests/          ← empty folder
+
+    Returns:
+        Path: The resolved Path object of the root directory that was created/used.
+"""
+    # ── 1. Descobrir nome da raiz (se não foi passado) ───────────────────────
+    if name is None:
+        try:
+            frame = inspect.currentframe()
+            if frame is None or frame.f_back is None:
+                name = "structure" #nivel
+            else:
+                caller_frame = frame.f_back
+                # Procuramos em locals do caller
+                matches = [
+                    var_name for var_name, obj in caller_frame.f_locals.items()
+                    if obj is tree
+                ]
+                if len(matches) == 1:
+                    name = matches[0]
+                elif len(matches) > 1:
+                    # ambíguo → usa o primeiro + sufixo pra evitar colisão
+                    name = f"{matches[0]}_tree"
+                else:
+                    # não achou → fallback
+                    name = "structure"
+        except Exception:
+            name = "structure"
+
+    # Sanitiza o nome da raiz (proteção mínima contra path traversal)
+    name = re.sub(r'[\\/:*?"<>|]', '_', str(name)).strip('_.- ')
+    if not name:
+        name = "structure"
+
+    # ── 2. Definir pasta raiz ────────────────────────────────────────────────
+    base_path = Path.cwd() if root is None else Path(root)
+    root_path = base_path / name
+
+    try:
+        root_path.mkdir(parents=True, exist_ok=exist_ok)
+    except Exception as e:
+        raise OsMeError(f"error: {e}") from e
+
+    # ── 3. Função recursiva principal ────────────────────────────────────────
+    def _recurse(subtree: dict, current: Path, depth: int):
+        for key, value in subtree.items():
+            # Sanitização forte do nome (por padrão)
+            if not allow_unsafe_names:
+                key = re.sub(r'[\\/:*?"<>|]', '_', str(key)).strip('_.- ')
+                if not key or key in {".", ".."}:
+                    continue
+
+            target = current / key
+
+            if isinstance(value, dict):
+                try:
+                    target.mkdir(exist_ok=exist_ok)
+                    _recurse(value, target, depth + 1)
+                except Exception as e:
+                    raise OsMeError(f"  └─ Error  {target}: {e}")
+            else:
+                # Folha: cria apenas a pasta pai (ou arquivo, se ativado)
+                target.parent.mkdir(parents=True, exist_ok=exist_ok)
+
+                if create_leaf_files:
+                    try:
+                        if value is None or value == "":
+                            target.touch(exist_ok=exist_ok)
+                        elif isinstance(value, str):
+                            target.write_text(value, encoding="utf-8")
+                        # poderia adicionar mais tipos (bytes, etc.)
+                    except Exception as e:
+                        raise OsMeError(f"  └─ Error {target}: {e}")
+
+    _recurse(tree, root_path, level)
+
+    return root_path

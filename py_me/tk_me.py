@@ -3,6 +3,17 @@ import random as ram
 import sys
 import threading
 import os
+
+class optional:
+    pass
+
+class TkMeError(Exception):
+  def __init__(self, exception):
+    super().__init__(exception)
+    self.exception = exception
+
+class Callable:
+    pass
     
 class NoReturn:
     pass
@@ -152,7 +163,7 @@ class tk_me:
             create_entries(1)
             window.mainloop()
         except Exception as p:
-            print("error:", p)
+            raise TkMeError(f"An error occurred during execution: {p}") from p
 
     def create_window(window_name: str, window_size: str) -> tk.Tk:
         """
@@ -161,6 +172,17 @@ class tk_me:
         Args:
             window_name (str): Title of the window.
             window_size (str): Geometry string like "800x600".
+
+        Behavior:
+            - creates a new Tk window instance
+            - sets the window title to the provided name
+            - sets the window geometry to the specified size
+            - restores stdout and stderr before creating the window
+
+        Example:
+            >>> from py_me import tk_me
+            >>> root = tk_me.create_window("My App", "800x600")
+            >>> root.mainloop()
 
         Returns:
             tkinter.Tk: created window instance.
@@ -173,21 +195,33 @@ class tk_me:
             window.geometry(window_size)
             return window
         except Exception as e:
-            print("error:", e)
+            raise TkMeError(f"The tk window could not be created due to an unexpected error: {e}") from e
 
     def create_label(text: str, x: int, y: int, font: str, size: int) -> tk.Label:
         """
-        Create and place a Tk Label.
+        Create and place a Tk Label widget.
 
         Args:
-            text (str): label text.
-            x (int): x position.
-            y (int): y position.
-            font (str): font family.
-            size (int): font size.
+            text (str): The text to display in the label.
+            x (int): X-coordinate position on the parent window.
+            y (int): Y-coordinate position on the parent window.
+            font (str): Font family name (e.g., "Arial", "Helvetica").
+            size (int): Font size in points.
+
+        Behavior:
+            - restores stdout and stderr before creating the label
+            - creates a Label widget with the specified text and font
+            - places the label at the given (x, y) coordinates using .place()
+            - raises TkMeError if creation fails
+
+        Example:
+            >>> from py_me import tk_me
+            >>> root = tk_me.create_window("App", "600x400")
+            >>> lbl = tk_me.create_label("Hello World", 50, 100, "Arial", 14)
+            >>> root.mainloop()
 
         Returns:
-            tkinter.Label: created Label.
+            tkinter.Label: The created Label widget.
         """
         sys.stdout = sys.__stdout__
         sys.stderr = sys.__stderr__
@@ -196,28 +230,46 @@ class tk_me:
             lbl.place(x=x, y=y)
             return lbl
         except Exception as e:
-            print("error:", e)
+            raise TkMeError(f"It was not possible to create the label because an unexpected error occurred: {e}") from e
 
-    def create_button(text: str, x: int, y: int, font: str, size: int, command: callable) -> tk.Button:
+    def create_button(text: str| None, x: int, y: int, font: str, size: int, command: Callable, color: str, color_bg: str) -> tk.Button:
         """
-        Create and place a Tk Button.
+        Create and place a Tk Button widget.
 
         Args:
-            text (str): button text (can be empty).
-            x (int): x position.
-            y (int): y position.
-            font (str): font family.
-            size (int): font size.
-            command (Callable): function to call on click.
+            text (str or None): Button text to display (can be empty string).
+            x (int): X-coordinate position on the parent window.
+            y (int): Y-coordinate position on the parent window.
+            font (str): Font family name (e.g., "Arial", "Helvetica").
+            size (int): Font size in points.
+            command (Callable): Function or method to call when the button is clicked.
+            color (str): Text color name (e.g., "white", "black", "#FF0000").
+            color_bg (str): Background color name (e.g., "blue", "green", "#00FF00").
+
+        Behavior:
+            - restores stdout and stderr before creating the button
+            - creates a Button widget with the specified text, font, and colors
+            - if text is empty string, creates button without text
+            - places the button at the given (x, y) coordinates using .place()
+            - binds the provided command function to the click event
+            - raises TkMeError if creation fails
+
+        Example:
+            >>> from py_me import tk_me
+            >>> root = tk_me.create_window("App", "600x400")
+            >>> def on_click():
+            >>>     print("Button clicked!")
+            >>> btn = tk_me.create_button("Click Me", 100, 150, "Arial", 12, on_click, "white", "blue")
+            >>> root.mainloop()
 
         Returns:
-            tkinter.Button: created Button.
+            tkinter.Button: The created Button widget.
         """
         sys.stdout = sys.__stdout__
         sys.stderr = sys.__stderr__
         try:
             if text != "":
-                btn = tk.Button(text=text, command=command, font=(font, size))
+                btn = tk.Button(text=text, command=command, font=(font, size), fg=color, bg=color_bg)
                 btn.place(x=x, y=y)
                 return btn
             else:
@@ -225,32 +277,62 @@ class tk_me:
                 btn.place(x=x, y=y)
                 return btn
         except Exception as e:
-            print("error:", e)
+            raise TkMeError(f"It was not possible to create the button because an unexpected error occurred: {e}") from e 
 
-    def create_text_window(height: int, width: int, x: int, y: int) -> tk.Text:
+    def create_text_widget(height: int, width: int, x: int, y: int) -> tk.Text:
         """
         Create and place a Tk Text widget.
 
         Args:
-            height (int): number of lines.
-            width (int): number of characters.
-            x (int): x position.
-            y (int): y position.
+            height (int): Height of the Text widget in number of visible lines.
+            width (int): Width of the Text widget in approximate number of characters.
+            x (int): X-coordinate position on the parent window.
+            y (int): Y-coordinate position on the parent window.
+
+        Behavior:
+            - restores stdout and stderr before creating the text widget
+            - creates a Text widget with the specified dimensions
+            - places the text widget at the given (x, y) coordinates using .place()
+            - raises TkMeError if creation fails
+
+        Example:
+            >>> from py_me import tk_me
+            >>> root = tk_me.create_window("App", "600x400")
+            >>> txt = tk_me.create_text_widget(10, 40, 50, 100)
+            >>> txt.insert("1.0", "Hello World")
+            >>> root.mainloop()
 
         Returns:
-            tkinter.Text: created Text widget.
+            tkinter.Text: The created Text widget.
         """
-        sys.stdout = sys.__stdout__
-        sys.stderr = sys.__stderr__
-        txt = tk.Text(height=height, width=width)
-        txt.place(x=x, y=y)
-        return txt
+        try:
+            sys.stdout = sys.__stdout__
+            sys.stderr = sys.__stderr__
+            txt = tk.Text(height=height, width=width)
+            txt.place(x=x, y=y)
+            return txt
+        except Exception as e:
+            raise TkMeError(f"It was not possible to create the text window because an unexpected error occurred: {e}") from e
 
     def error_window() -> NoReturn:
         """
-        Create an 'error' window that randomizes font and size periodically.
+        Create a full-screen-like 'error' window that continuously randomizes 
+        the font family and size of an "error" label for visual/demo effects.
 
-        Useful for visual/demo effects.
+        Args:
+            None
+
+        Behavior:
+            - creates a large 1600x700 window titled "error"
+            - displays a centered "error" label that changes font family and size randomly
+            - updates the label every 100 milliseconds with a new random font and size
+            - includes a "close" button to destroy the window
+            - restores the original stdout and stderr streams before starting
+            - runs indefinitely until the window is closed
+
+        Example:
+            >>> from py_me import tk_me
+            >>> tk_me.error_window()  # launches the chaotic error animation window
 
         Returns:
             None
@@ -278,29 +360,63 @@ class tk_me:
 
     def destroy_widget(widget: tk.Widget) -> NoReturn:
         """
-        Destroy a Tk widget.
+        Safely destroy a Tkinter widget and clean up related resources.
 
         Args:
-            widget (tk widget): widget to destroy.
+            widget (tk.Widget): The Tkinter widget instance to be destroyed.
+
+        Behavior:
+            - restores the original stdout and stderr streams
+            - calls the widget's .destroy() method to remove it from the window
+            - raises a TkMeError with details if destruction fails for any reason
+
+        Example:
+            >>> from py_me import tk_me
+            >>> root = tk_me.create_window("hi", "600x600)
+            >>> lbl = create_label("hi", 0, 0, Arial, 14)
+            >>> tk_me.destroy_widget(lbl)  # removes the label from the window
 
         Returns:
             None
         """
-        sys.stdout = sys.__stdout__
-        sys.stderr = sys.__stderr__
-        widget.destroy()
+        try:
+            sys.stdout = sys.__stdout__
+            sys.stderr = sys.__stderr__
+            widget.destroy()
+        except Exception as e:
+            raise TkMeError(f"It was not possible to destroy {widget} due to an unexpected error: {e}") from e
 
     def import_tk_window(window_name: str, script_path: str, label_text: str, button_text: str) -> NoReturn:
         """
-        Create a 500x500 Tk window with a label and a button that runs a script.
+        Create a simple 500x500 Tkinter window with a label and a button 
+        that executes an external Python script when clicked.
 
-        The executed script will receive 'window' in its global scope.
+        The executed script will receive the 'window' object in its global scope.
 
         Args:
-            window_name (str)
-            script_path (str)
-            label_text (str)
-            button_text (str)
+            window_name (str): Title of the created window.
+            script_path (str): Path to the Python script file that will be executed.
+            label_text (str): Text to display in the window's label.
+            button_text (str): Text to display on the run button.
+
+        Behavior:
+            - creates a fixed-size window of 500x500 pixels
+            - places a label and a button in the center of the window
+            - when the button is clicked:
+                - closes/destroys the current window
+                - reads the target script file
+                - executes the script using exec() with the original window object available
+            - restores the original stdout and stderr before running the script
+            - raises a TkMeError with details if the script execution fails
+
+        Example:
+            >>> from py_me import tk_me
+            >>> tk_me.import_tk_window(
+            >>>     "Launch Game",
+            >>>     "game.py",
+            >>>     "Ready to play?",
+            >>>     "Start Game Now"
+            >>> )
 
         Returns:
             None
@@ -319,25 +435,87 @@ class tk_me:
                     content = f.read()
                     exec(content, {"window": window})
             except Exception as e:
-                print(f"Error running script: {e}")
+                raise TkMeError(f"Error running script: {e}") from e
         btn = tk.Button(window, text=button_text, font=("Arial", 14), command=run)
         btn.place(x=150, y=250)
         window.mainloop()
 
-    def create_slider(num_min: int, num_max: int, command: callable, x: int, y: int) -> tk.Scale:
+    def create_slider(num_min: int, num_max: int, command: Callable, x: int, y: int, orient: str | optional = "horizontal") -> tk.Scale:
         """
-        Quickly create a horizontal Scale (slider).
+        Quickly create and place a Tkinter Scale (slider) widget.
 
         Args:
-            num_min (int): slider minimum.
-            num_max (int): slider maximum.
-            command (callable): function to call on change.
-            x (int): x position.
-            y (int): y position.
+            num_min (int): Minimum value of the slider.
+            num_max (int): Maximum value of the slider.
+            command (Callable): Function to call whenever the slider value changes.
+            x (int): X-coordinate to place the slider on the parent window.
+            y (int): Y-coordinate to place the slider on the parent window.
+            orient (str, optional): Slider orientation. 
+                "horizontal" (default) or "vertical".
+
+        Behavior:
+            - creates a Scale widget with the specified range and orientation
+            - automatically places it at the given (x, y) coordinates using .place()
+            - sets a default length of 400 pixels
+            - calls the provided command function on value change
+
+        Example:
+            >>> from py_me import tk_me
+            >>> root = tk_me.create_window("hi", "600x600)
+            >>> def on_change(value):
+            >>>     print(f"Slider value: {value}")
+            >>> slider = tk_me.create_slider(0, 100, on_change, 50, 100)
+            >>> root.mainloop()
 
         Returns:
-            tkinter.Scale: created slider.
+            tk.Scale: The created and placed Scale (slider) widget.
         """
-        slider = tk.Scale(from_=num_min, to=num_max, orient="horizontal", command=command, length=400)
-        slider.place(x=x, y=y)
-        return slider
+        try:
+            slider = tk.Scale(from_=num_min, to=num_max, orient= orient, command=command, length=400)
+            slider.place(x=x, y=y)
+            return slider
+        except Exception as e:
+            raise TkMeError(f"It was not possible to create the slider due to an error that occurred: {e}") from e
+    
+    def create_listbox(height: int, width: int , font: str , size: int, selectmode: any, List: list, insert: any | optional = tk.END) -> tk.Listbox:
+        """
+        Create a Tkinter Listbox widget pre-filled with items from a list.
+
+        Args:
+            height (int): Height of the Listbox in number of visible lines.
+            width (int): Width of the Listbox in approximate number of characters.
+            font (str): Name of the font family to use (e.g. "Arial", "Helvetica").
+            size (int): Font size in points.
+            selectmode (any): Selection mode. Common values:
+                - tk.SINGLE: select only one item (default behavior)
+                - tk.MULTIPLE: allow multiple selection
+                - tk.EXTENDED: extended selection with Shift/Ctrl
+            List (list): List of items (usually strings) to insert into the Listbox.
+            insert (any, optional): Position where items will be inserted.
+                Defaults to tk.END (append to the end).
+
+        Behavior:
+            - creates a Listbox widget with the specified dimensions, font and selection mode
+            - inserts all items from the provided list at the chosen position
+            - does not automatically pack/grid/place the widget or add a scrollbar
+
+        Example:
+            >>> from py_me import tk_me
+            >>> root = tk_me.create_window("hi", "600x600)
+            >>> fruits = ["Apple", "Banana", "Orange", "Strawberry"]
+            >>> lb = tk_mecreate_listbox(8, 30, "Arial", 12, SINGLE, fruits, insert=END)
+            >>> lb.pack(pady=10)
+
+        Returns:
+            tk.Listbox: The created and populated Listbox widget.
+        """
+        listbox = tk.Listbox(
+            height= height,
+            width= width,
+            font= (font, size),
+            selectmode= selectmode
+        )
+        for Any in List:
+            listbox.insert(insert, Any)
+        
+        return listbox

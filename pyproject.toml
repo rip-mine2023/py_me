@@ -1,6 +1,6 @@
 [project]
 name = "py_me"
-version = "3.4.1"
+version = "3.5.1"
 description = "Python library with modules for sounds, graphical interface, semi-automatic creation of Python projects, and advanced file manipulation."
 authors = [{ name = "Isaias da Silva Nobrega", email = "isaiasdasilvanobrega@gmail.com" }]
 maintainers = [{ name = "Isaias da Silva Nobrega", email = "isaiasdasilvanobrega@gmail.com" }]
@@ -9,7 +9,8 @@ license = {file = "LICENSE"}
 requires-python = ">=3.7"
 dependencies = [
     "pygame",
-    "pydub"
+    "pydub",
+    "rich"
 ]
 keywords = ["pygame", "pydub", "audio", "music", "tkinter", "sound", "interface", "Python", "biblioteca, projetos, project, os"]
 classifiers = [

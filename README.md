@@ -4,63 +4,63 @@ py_me is a Python library that provides modules for audio manipulation (music_me
 
 ## Version
 
-**3.4.1** - released on 2026-01-27
+**3.5.1** - released on 2026-01-27
 
 ## Changes
 
-- Full translation into English
-- Added new helper utilities and aesthetic improvements
+- new function in tk_me and os_me
+- complete overhaul of tk_me
 
 ## tk_me
 ### Example:
 ```python
 from py_me import tk_me
 
-win = tk_me.create_window("hi", "100x100")  # Portuguese alias: apenas_criar
+win = tk_me.create_window("hi", "100x100") 
 def exit_app():
     win.destroy()
-tk_me.create_button("exit", 0, 0, "Arial", 14, exit_app)  # Portuguese alias: botão
+tk_me.create_button("exit", 0, 0, "Arial", 14, exit_app)  
 win.mainloop()
 ```
 ### Functions
-- import_script_window(window_name, window_size, import_file)  (Portuguese alias: tk_import)
-- create_window(window_name, window_size)  (Portuguese alias: apenas_criar)
-- create_label(text, x, y, font, size)  (Portuguese alias: label)
-- create_button(text, x, y, font, size, command)  (Portuguese alias: botão)
-- create_text_window(height, width, x, y)  (Portuguese alias: janela_de_Texto)
-- error_window()  (Portuguese alias: janela_error)
-- destroy_widget(widget)  (Portuguese alias: destruir_objetos)
-- import_tk_window(window_name, tk_file, label_text, button_text)  (Portuguese alias: tk_import_tk)
-- create_slider(min, max, command, x, y)  (Portuguese alias: slider)
+- import_script_window(window_name, window_size, import_file)  
+- create_window(window_name, window_size)
+- create_label(text, x, y, font, size)  
+- create_button(text, x, y, font, size, command)  
+- create_text_window(height, width, x, y)  
+- error_window()
+- destroy_widget(widget)
+- import_tk_window(window_name, tk_file, label_text, button_text)
+- create_slider(min, max, command, x, y)
 
 ## music_me
 ### Example:
 ```python
 from py_me import music_me
 
-music_me.loop_soundtrack(2, "my\\beat.mp3")            # Portuguese alias: trilha_sonora_inloop
-elem = music_me.musical_element(1, "my\\sound.wav", 12)  # Portuguese alias: elemento_musical
-music_me.stop_element_after(elem, 10)                  # Portuguese alias: dell
+music_me.loop_soundtrack(2, "my\\beat.mp3")            
+elem = music_me.musical_element(1, "my\\sound.wav", 12)  
+music_me.stop_element_after(elem, 10)                  
 ```
 ### Functions
-- loop_soundtrack(speed, file)  (Portuguese alias: trilha_sonora_inloop)
-- musical_element(speed, file, wait_time=0)  (Portuguese alias: elemento_musical)
-- pitched_musical_element(speed, pitch, file, wait_time=0)  (Portuguese alias: elemento_musical_entonado)
-- stop_element_after(element, seconds_after_start)  (Portuguese alias: dell)
-- stop_all_after(delay_seconds)  (Portuguese alias: stop)
-- set_element_volume(element, volume, delay)  (Portuguese alias: volume_elemento)
-- set_master_volume(volume, delay)  (Portuguese alias: volume_geral)
+- loop_soundtrack(speed, file)  
+- musical_element(speed, file, wait_time=0)  
+- pitched_musical_element(speed, pitch, file, wait_time=0)  
+- stop_element_after(element, seconds_after_start)  
+- stop_all_after(delay_seconds)  
+- set_element_volume(element, volume, delay) 
+- set_master_volume(volume, delay)
 
 ## project_me
 ### Example:
 ```python
 from py_me import project_me
 
-project_me.create_project()  # Portuguese alias: criar_projeto
+project_me.create_project()
 ```
 
 ### Function
-- create_project()  (interactive helper to scaffold a basic Python project; Portuguese alias: criar_projeto)
+- create_project() 
 
 ## os_me
 ### Example:
