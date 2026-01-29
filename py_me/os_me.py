@@ -1021,7 +1021,7 @@ class os_me:
   file = file_class(details)
   path = path_class(details)
 
-def create_dir_tree(
+  def create_dir_tree(
     tree: Dict[str, Union[Dict, None, str, Path]],
     name: Optional[str] = None,
     level: int = 0,
