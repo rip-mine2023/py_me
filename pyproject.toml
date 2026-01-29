@@ -1,6 +1,6 @@
 [project]
 name = "py_me"
-version = "3.5.3"
+version = "3.5.4"
 description = "Python library with modules for sounds, graphical interface, semi-automatic creation of Python projects, and advanced file manipulation."
 authors = [{ name = "Isaias da Silva Nobrega", email = "isaiasdasilvanobrega@gmail.com" }]
 maintainers = [{ name = "Isaias da Silva Nobrega", email = "isaiasdasilvanobrega@gmail.com" }]

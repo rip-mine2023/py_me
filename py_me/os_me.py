@@ -402,23 +402,10 @@ class file_class:
     Returns:
         None
     """
-    if self.inicio_de_fluxo == True:
-      if self.details.enable_logging:
-        self.ultilidades.registrar_log(
-          self.details.get_message("start_flow")
-        )
-        self.inicio_de_fluxo = False
-    if os.path.exists(path):
-      with open(path, "a", encoding="utf-8") as so:
-        so.write(content)
-      if self.details.enable_logging:
-        self.ultilidades.registrar_log(
-          self.details.get_message("add", numero = self.numero)
-        )
-      with open(path, "r", encoding="utf-8") as filer_r:
-        conteudo_atual = filer_r.read()
-
-      # Criar snapshot
+    with open(path, "r", encoding="utf-8") as filer_r:
+      conteudo_atual = filer_r.read()
+    
+    # Criar snapshot
     if self.details.auto_snapshot_on_edit:
       snapshot = {
         "versao": self.numero_versao,
@@ -466,10 +453,23 @@ class file_class:
             )
             self.numero += 1
       else:
-        with open(self.details.log_file, "w", encoding="utf-8") as f:
+        with open(self.details.timeline_file, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2)
 
         self.numero_versao += 1
+    if self.inicio_de_fluxo == True:
+      if self.details.enable_logging:
+        self.ultilidades.registrar_log(
+          self.details.get_message("start_flow")
+        )
+        self.inicio_de_fluxo = False
+    if os.path.exists(path):
+      with open(path, "a", encoding="utf-8") as so:
+        so.write(content)
+      if self.details.enable_logging:
+        self.ultilidades.registrar_log(
+          self.details.get_message("add", numero = self.numero)
+        )
 
   def execution_sequence(self, paths: list, ignore_error: bool = False, list_erros: bool = False) -> NoReturn:
     """

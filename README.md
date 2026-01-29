@@ -4,7 +4,7 @@ py_me is a Python library that provides modules for audio manipulation (music_me
 
 ## Version
 
-**3.5.2** - released on 2026-01-29
+**3.5.4** - released on 2026-01-29
 
 ## Changes
 
