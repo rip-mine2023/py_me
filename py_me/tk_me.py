@@ -3,9 +3,7 @@ import random as ram
 import sys
 import threading
 import os
-
-class optional:
-    pass
+from typing import Optional, Any
 
 class TkMeError(Exception):
   def __init__(self, exception):
@@ -440,7 +438,7 @@ class tk_me:
         btn.place(x=150, y=250)
         window.mainloop()
 
-    def create_slider(num_min: int, num_max: int, command: Callable, x: int, y: int, orient: str | optional = "horizontal") -> tk.Scale:
+    def create_slider(num_min: int, num_max: int, command: Callable, x: int, y: int, orient: Optional[str] = "horizontal") -> tk.Scale:
         """
         Quickly create and place a Tkinter Scale (slider) widget.
 
@@ -477,7 +475,7 @@ class tk_me:
         except Exception as e:
             raise TkMeError(f"It was not possible to create the slider due to an error that occurred: {e}") from e
     
-    def create_listbox(height: int, width: int , font: str , size: int, selectmode: any, List: list, insert: any | optional = tk.END) -> tk.Listbox:
+    def create_listbox(height: int, width: int , font: str , size: int, selectmode: Any, List: list, insert: Optional[Any] = tk.END) -> tk.Listbox:
         """
         Create a Tkinter Listbox widget pre-filled with items from a list.
 

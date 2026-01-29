@@ -4,7 +4,7 @@ py_me is a Python library that provides modules for audio manipulation (music_me
 
 ## Version
 
-**3.5.2** - released on 2026-01-27
+**3.5.2** - released on 2026-01-29
 
 ## Changes
 
@@ -23,15 +23,16 @@ tk_me.create_button("exit", 0, 0, "Arial", 14, exit_app)
 win.mainloop()
 ```
 ### Functions
-- import_script_window(window_name, window_size, import_file)  
-- create_window(window_name, window_size)
-- create_label(text, x, y, font, size)  
-- create_button(text, x, y, font, size, command)  
-- create_text_window(height, width, x, y)  
-- error_window()
-- destroy_widget(widget)
-- import_tk_window(window_name, tk_file, label_text, button_text)
-- create_slider(min, max, command, x, y)
+- import_script_window
+- create_window
+- create_label  
+- create_button
+- create_text_window
+- error_window
+- destroy_widget
+- import_tk_window
+- create_slider 
+- create_listbox
 
 ## music_me
 ### Example:
