@@ -1,0 +1,2 @@
+replace = (Ctrl + f) + (Ctrl + h)
+procurar = Ctrl + f

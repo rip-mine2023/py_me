@@ -1138,7 +1138,8 @@ class os_me:
                             target.touch(exist_ok=exist_ok)
                         elif isinstance(value, str):
                             target.write_text(value, encoding="utf-8")
-                        # poderia adicionar mais tipos (bytes, etc.)
+                        elif isinstance(value, bytes):
+                            target.write_bytes(value)
                     except Exception as e:
                         raise OsMeError(f"  └─ Error {target}: {e}")
 
