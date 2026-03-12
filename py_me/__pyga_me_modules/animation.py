@@ -17,7 +17,7 @@ class animation:
     SELECTDOWN = 1073742116
     SELECTCONFIRM = 1073742117
     def __init__(self):
-        import pyga_me
+        from pyga_me import pyga_me
         self.pyga_me = pyga_me
         os_me.details.enable_rich_traceback = False
         os_me.details.silent_FileHunter = True

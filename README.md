@@ -1,15 +1,14 @@
 # py_me
 
-py_me is a Python library that provides modules for audio manipulation (music_me) and Tkinter GUI helpers (tk_me).
+py_me is a Python library that provides modules for audio manipulation (music_me), Tkinter GUI helpers (tk_me), Semi-automatic creation of Python projects (project_eu), advanced file manipulation (os_me), and assistance in creating Pygame games (pyga_me).
 
 ## Version
 
-**4.1.1** - released on 2026-03-10
+**4.1.2** - released on 2026-03-11
 
 ## Changes
 
-- new module called py_game
-- The create_dir_tree function has been modified to accept bytes.
+- debug
 
 ## tk_me
 ### Example:

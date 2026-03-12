@@ -5,7 +5,7 @@ UserEventsInMoment = deque()
 
 class event:
     def __init__(self, type, data):
-        import pyga_me
+        from pyga_me import pyga_me
         self.type = type
 
         if self.type == pyga_me.NOTEPLAYED:
@@ -96,7 +96,7 @@ class event:
             self.data = data
 
 def get_events():
-    import pyga_me
+    from pyga_me import pyga_me
     validated: list[event] = []
     while events_inmoment: 
         ev = events_inmoment.popleft()

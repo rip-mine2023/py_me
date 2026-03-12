@@ -22,7 +22,7 @@ class k_notes:
     NULLNOTESTOP = 1073742119
     NULLNOTESTOP_INACCURATE = 1073742120
     def init(display: pygame.display = None):
-        import pyga_me
+        from pyga_me import pyga_me
         k_notes.pyga_me = pyga_me
         os_me.details.enable_rich_traceback = False
         os_me.details.silent_FileHunter = True

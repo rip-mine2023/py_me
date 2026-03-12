@@ -18,8 +18,8 @@ RPGDEAD = 1073742136
 USEREVENT = 1073742137
 
 class Player2D:
-    from pyga_me import events
-    import pyga_me
+    from pyga_me import pyga_me
+    events = pyga_me.events
     def __init__(self, size: tuple[int], right_frames_stop: list[pygame.Surface]| str , left_frames_stop: list[pygame.Surface]| str, right_frames_walking: list[pygame.Surface]| str, left_frames_walking: list[pygame.Surface]| str, gravity: int, vel:int, jump_limit: int, screen):
         Player2D.events.events_inmoment.append(Player2D.events.event(P2DCREATED, self))
         self.size = size
@@ -40,7 +40,7 @@ class Player2D:
         self.x, self.y = screen.get_size()
         self.direction = "left"
         self.state = "stop"
-        self.player = Player2D.pyga_me.animation()
+        self.player = Player2D.pyga_me.Animation()
         self.frames = []
         self.frames_control = True
         if isinstance(right_frames_stop, str) and isinstance(left_frames_stop, str) and isinstance(right_frames_walking, str) and isinstance(left_frames_walking, str):
@@ -241,9 +241,9 @@ class Player2D:
 
 class PlayerRPG:
     def __init__(self, frames_up_stop: list, frames_down_stop: list, frames_left_stop: list, frames_right_stop: list, frames_up_walking: list, frames_down_walking: list, frames_left_walking: list, frames_right_walking: list, size: tuple[int], vel:int, screen):
-        import pyga_me
+        from pyga_me import pyga_me
         self.pyga_me = pyga_me
-        self.animation = pyga_me.animation()
+        self.animation = pyga_me.Animation()
         self.frames_up_stop = frames_up_stop
         self.frames_down_stop = frames_down_stop
         self.frames_left_stop = frames_left_stop
