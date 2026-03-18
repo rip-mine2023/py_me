@@ -4,11 +4,11 @@ py_me is a Python library that provides modules for audio manipulation (music_me
 
 ## Version
 
-**4.1.3** - released on 2026-03-18
+**4.1.4** - released on 2026-03-18
 
 ## Changes
 
-- debug *2
+- debug *3
 
 ## tk_me
 ### Example:
