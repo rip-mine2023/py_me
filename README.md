@@ -4,11 +4,11 @@ py_me is a Python library that provides modules for audio manipulation (music_me
 
 ## Version
 
-**4.1.2** - released on 2026-03-11
+**4.1.3** - released on 2026-03-18
 
 ## Changes
 
-- debug
+- debug *2
 
 ## tk_me
 ### Example:
@@ -294,6 +294,12 @@ is the actual code validation file I used to test my code,
 and since I'm Brazilian, 
 there are many variables in Portuguese. 
 I hope this doesn't cause too much trouble.
+
+### pyga_me3 <-- temporary
+I know that those of you who use py_me must be waiting for the pyga_me docstrings, but I ended
+up finding some serious bugs and had to fix them, so pyga_me doesn't have docstrings yet. But 
+in the next update I will be adding the docstrings, hopefully I will have fixed the bugs I 
+found, otherwise I will have to postpone it even longer.
 
 ### music_me1 <-- permanet?
 The music_me project was put on hold midway through.
