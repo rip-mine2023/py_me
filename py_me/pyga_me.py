@@ -13,8 +13,27 @@ from typing import Callable
 
 
 class pyga_me:
+    """pyga_me is a pygame helper module for sound, animation, and 2D object management.
+
+    classes:
+    - Values
+    - k_notes
+      - UltraSondService
+    - events
+      - event
+    - animation
+      - menu
+    - objects
+      - Player2D
+      - PlayerRPG
+
+    def:
+    - init
+    - load_file
+    """
     @dataclass
     class Values:
+        """Shared runtime state and note/event constants for pyga_me."""
         a: bool 
         sons: dict 
         extended_mode: bool
@@ -70,13 +89,44 @@ class pyga_me:
         screen: pygame.Surface
 
     def init():
+        """Initialize the pyga_me system and configure helper settings.
+
+        Behavior:
+            - initializes the internal note subsystem
+            - disables rich traceback output
+            - enables silent file searching
+
+        Example:
+            >>> pyga_me.init()
+
+        Returns:
+            None
+        """
         pyga_me.k_notes.init()
         os_me.details.enable_rich_traceback = False
         os_me.details.silent_FileHunter = True
     
 
     class k_notes:
+        """Collection of note management and basic pygame helpers."""
         def init(display: pygame.display = None):
+            """Initialize pygame, mixer, display settings, and default note values.
+
+            Args:
+                display (pygame.display, optional): Existing pygame display surface to reuse.
+                    Defaults to None.
+
+            Behavior:
+                - initializes pygame subsystems
+                - configures default note state and colors
+                - loads standard note audio files
+
+            Example:
+                >>> pyga_me.k_notes.init()
+
+            Returns:
+                None
+            """
             os_me.details.enable_rich_traceback = False
             os_me.details.silent_FileHunter = True
             pygame.init()
@@ -120,12 +170,25 @@ class pyga_me:
 
 
         def basic_display_test():
+            """Create a basic pygame display window and enable simple rendering mode.
+
+            Behavior:
+                - creates a 400x300 pygame display surface if none exists
+                - sets the basic mode flag
+
+            Example:
+                >>> screen = pyga_me.k_notes.basic_display_test()
+
+            Returns:
+                pygame.Surface: The display surface used for basic rendering.
+            """
             if pyga_me.Values.screen is None:
                 pyga_me.Values.screen = pygame.display.set_mode((400, 300))
                 pyga_me.Values.basic = True
             return pyga_me.Values.screen
     
         class UltraSondService:
+            """Service class for advanced key-to-note mapping and custom note registration."""
             extended_mode: bool = False
 
             extended_mode_timer: int = 2000
@@ -138,6 +201,28 @@ class pyga_me:
 
             @classmethod
             def music_in_the_keys(cls, *keys: int, note: tuple = ()):
+                """Map one or more keyboard keys to musical note sounds.
+
+                Args:
+                    *keys (int): pygame keyboard codes to bind.
+                    note (tuple, optional): Note constants to assign to the keys.
+                        Defaults to ().
+
+                Behavior:
+                    - filters out invalid pygame key codes
+                    - resolves note constants to sound objects
+                    - associates valid keys with the resolved sounds
+                    - applies extended mode settings if configured
+
+                Example:
+                    >>> pyga_me.k_notes.UltraSondService.music_in_the_keys(
+                    ...     pygame.K_1, pygame.K_2, note=(pyga_me.Values.V_DO, pyga_me.Values.V_RE)
+                    ... )
+
+                Returns:
+                    None
+                """
+
                 notes = []
                 valid_keys = []
     
@@ -181,14 +266,49 @@ class pyga_me:
                 pyga_me.Values.extended_mode_timer = cls.extended_mode_timer
 
             @classmethod
-            def register_new_note(cls, sound: pygame.mixer.Sound, name: str = "null"):
-                    cls.new_notes.append(cls.note_number)
-                    pyga_me.Values.VALUES.append(sound)
-                    cls.notes_names[cls.note_number] = name
-                    cls.note_number += 1
-                    return cls.note_number - 1
+            def register_new_note(cls, sound: pygame.mixer.Sound | None, name: str = "null"):
+                """Register a custom sound note and return its new note index.
+
+                Args:
+                    sound (pygame.mixer.Sound | None): Sound object to register or None.
+                    name (str, optional): Human-readable name for the note.
+                        Defaults to "null".
+
+                Behavior:
+                    - appends the new sound to the shared VALUES list
+                    - stores the custom name by note index
+                    - increments the next available note index
+
+                Example:
+                    >>> note_id = pyga_me.k_notes.UltraSondService.register_new_note(my_sound, "custom")
+
+                Returns:
+                    int: The assigned custom note index.
+                """
+                cls.new_notes.append(cls.note_number)
+                pyga_me.Values.VALUES.append(sound)
+                cls.notes_names[cls.note_number] = name
+                cls.note_number += 1
+                return cls.note_number - 1
 
         def name_from_note(note: int) -> str:
+            """Resolve the display name of a note based on its current key mapping.
+
+            Args:
+                note (int): Keyboard key code for the note event.
+
+            Behavior:
+                - compares the mapped sound for the key against known note objects
+                - returns the matching note name or a custom registered note name
+                - returns a fallback label when not recognized
+
+            Example:
+                >>> pyga_me.k_notes.name_from_note(pygame.K_1)
+                'DO'
+
+            Returns:
+                str: The recognized note name or 'nota desconhecida'.
+            """
             for key, value in pyga_me.Values.sons.items():
                 if key == note:
                     if value == pyga_me.Values.VALUES[1]:
@@ -218,6 +338,23 @@ class pyga_me:
             return "nota desconhecida"
                 
         def sond_service(service: int):
+            """Configure default key-to-note mappings according to service level.
+
+            Args:
+                service (int): Service level that determines key mappings.
+
+            Behavior:
+                - maps number keys to diatonic notes for service level 1
+                - adds keypad mappings for service level 2
+                - activates extended mode at level 3
+                - adds navigation and letter key mappings at level 4
+
+            Example:
+                >>> pyga_me.k_notes.sond_service(4)
+
+            Returns:
+                None
+            """
             if service >= 1:
                 pyga_me.Values.sons.update({
                     pygame.K_1: pyga_me.Values.VALUES[1],
@@ -259,9 +396,41 @@ class pyga_me:
                     })
 
         def extended_mode_config(timeout: int = 2000) -> None:
+            """Configure the extended mode fadeout timeout for note release.
+
+            Args:
+                timeout (int, optional): Fadeout duration in milliseconds.
+                    Defaults to 2000.
+
+            Behavior:
+                - updates the shared extended mode timer value
+
+            Example:
+                >>> pyga_me.k_notes.extended_mode_config(1500)
+
+            Returns:
+                None
+            """
             pyga_me.Values.extended_mode_timer = timeout
 
         def run_time(event: pygame.event.Event) -> bool:
+            """Handle a pygame event and manage playback state for note input.
+
+            Args:
+                event (pygame.event.Event): The pygame event to process.
+
+            Behavior:
+                - animates the basic display background when enabled
+                - starts, stops, or fades out note sounds
+                - emits runtime events for note playback and stop actions
+                - returns False on pygame.QUIT to signal exit
+
+            Example:
+                >>> running = pyga_me.k_notes.run_time(event)
+
+            Returns:
+                bool: Current running state after processing the event.
+            """
             if pyga_me.Values.basic:
                 pyga_me.Values.screen.fill((pyga_me.Values.r, pyga_me.Values.g, pyga_me.Values.b))
                 pyga_me.Values.animation_timer["red"] += 1
@@ -314,11 +483,22 @@ class pyga_me:
             return pyga_me.Values.a
     
     class events:
+        """Event queue manager for pyga_me runtime and user-defined events."""
         events_inmoment = deque()
         UserEventsInMoment = deque()
 
         class event:
+            """Represents a single event with a typed payload."""
             def __init__(self, type, data):
+                """Create a new runtime event with the provided type and payload.
+
+                Args:
+                    type: Event type constant.
+                    data: Associated event payload.
+
+                Returns:
+                    None
+                """
                 self.type = type
 
                 if self.type == pyga_me.Values.NOTEPLAYED:
@@ -409,6 +589,19 @@ class pyga_me:
                     self.data = data
 
         def get_events():
+            """Collect and validate all pending events from the internal queues.
+
+            Behavior:
+                - drains the engine event queue
+                - drains the user event queue
+                - returns only events with valid types
+
+            Example:
+                >>> events = pyga_me.events.get_events()
+
+            Returns:
+                list[pyga_me.events.event]: Validated accumulated events.
+            """
             validated: list[pyga_me.events.event] = []
             while pyga_me.events.events_inmoment: 
                 ev = pyga_me.events.events_inmoment.popleft()
@@ -419,8 +612,10 @@ class pyga_me:
                 validated.append(ev)
             return validated
     class animation:
+        """Animation helper for frame extraction, playback, and event timing."""
         idd = 1
         def __init__(self):
+            """Initialize animation timing state and assign a unique animation id."""
             os_me.details.enable_rich_traceback = False
             os_me.details.silent_FileHunter = True
             self.frame_timer = 0
@@ -434,6 +629,23 @@ class pyga_me:
             pyga_me.animation.idd += 1
 
         def extract_frames_gif(self, path_gif, size):
+            """Load and resize each frame from a GIF for pygame rendering.
+
+            Args:
+                path_gif (str): Path to the source GIF file.
+                size (tuple[int, int]): Target frame width and height.
+
+            Behavior:
+                - opens the GIF file
+                - converts each frame to RGBA
+                - resizes and converts frames to pygame surfaces
+
+            Example:
+                >>> frames = anim.extract_frames_gif('walk.gif', (64, 64))
+
+            Returns:
+                list[pygame.Surface]: Processed frames ready for blitting.
+            """
             gif = Image.open(path_gif)
             frames = []
             for frame in ImageSequence.Iterator(gif):
@@ -443,6 +655,26 @@ class pyga_me:
             return frames
 
         def animation(self, frames: list, screen, auto_fill: bool = True, Clok_value: int  = None, coordinates: tuple[int] = (0,0)):
+            """Animate a sequence of frames, measure timing, and emit lag events.
+
+            Args:
+                frames (list): Sequence of pygame surfaces to display.
+                screen: Target pygame display surface.
+                auto_fill (bool): Clear the screen before drawing if True.
+                Clok_value (int | None): Optional target FPS reference.
+                coordinates (tuple[int, int]): Draw position for the frame.
+
+            Behavior:
+                - advances the frame index on a timer
+                - blits the current frame to screen
+                - appends lag or safe animation events based on timing
+
+            Example:
+                >>> anim.animation(frames, screen, False, 60, (0, 0))
+
+            Returns:
+                None
+            """
             self._nunber_of_executions += 1
             pyga_me.events.events_inmoment.append(pyga_me.events.event(pyga_me.Values.GIFEXECUTED, self._nunber_of_executions))
             if self._play:
@@ -469,6 +701,26 @@ class pyga_me:
             screen.blit(frames[self.frame_index], coordinates)
 
         def scrolling_text(self, text: list, font: pygame.font.Font, screen, space: int, roll: int = 10):
+            """Render scrolling text and emit roll events based on user input.
+
+            Args:
+                text (list): Lines of text to render.
+                font (pygame.font.Font): Font used for rendering.
+                screen: Target pygame surface to draw on.
+                space (int): Vertical starting offset.
+                roll (int): Scroll increment for each up/down press.
+
+            Behavior:
+                - renders each line centered horizontally
+                - updates roll position with arrow key input
+                - emits POSITIVEROLL or NEGATIVEROLL events
+
+            Example:
+                >>> anim.scrolling_text(['Line 1', 'Line 2'], font, screen, 20)
+
+            Returns:
+                None
+            """
             for i, texto in enumerate(text):
                 render = font.render(texto, True, (0, 0, 250))
                 x = screen.get_width() // 2 - render.get_width() // 2
@@ -488,11 +740,32 @@ class pyga_me:
                     pyga_me.events.events_inmoment.append(pyga_me.events.event(pyga_me.Values.NEGATIVEROLL, [self, self.roll * -1]))
     
         class menu:
+            """Menu helper for drawing option lists and handling navigation events."""
             def __init__(self):
+                """Initialize menu layout state and selected index."""
                 self.x = 0
                 self.y = 0
                 self.selected = 0
             def menu_config(self, screen, options: list[str], font: pygame.font.Font, evento=None):
+                """Update the menu selection based on a pygame event.
+
+                Args:
+                    screen: pygame surface used to compute menu dimensions.
+                    options (list[str]): Menu item labels.
+                    font (pygame.font.Font): Font used to render menu items.
+                    evento: Optional pygame event to process.
+
+                Behavior:
+                    - updates current selection for up/down keys
+                    - emits SELECTUP, SELECTDOWN, and SELECTCONFIRM events
+                    - stops the menu on QUIT events
+
+                Example:
+                    >>> menu.menu_config(screen, ['Play', 'Exit'], font, event)
+
+                Returns:
+                    bool: True while the menu remains active.
+                """
                 pyga_me.events.events_inmoment.append(pyga_me.events.event(pyga_me.Values.NEWMENU, self))
                 menu_ativo = True
                 self.x = screen.get_width()
@@ -514,6 +787,18 @@ class pyga_me:
                 return menu_ativo
                         
             def menu_draw_basic(self, screen, options: list[str], font: pygame.font.Font, select: int, auto_fill: bool = True):
+                """Draw a simple centered menu with one selected highlight.
+
+                Args:
+                    screen: pygame surface to render on.
+                    options (list[str]): Menu labels.
+                    font (pygame.font.Font): Font used for rendering.
+                    select (int): Index of selected menu item.
+                    auto_fill (bool): If True, clear the screen before drawing.
+
+                Returns:
+                    None
+                """
                 if auto_fill:
                     screen.fill((0,0,0))
                 for i, option in enumerate(options):
@@ -524,6 +809,22 @@ class pyga_me:
                     screen.blit(text_surface, (x, y))
 
             def menu_draw_advanced(self, screen, options: list[str], font: pygame.font.Font, select: int, auto_fill: bool = True, color_selected: tuple = (255, 0, 0), color_unselected: tuple = (255, 255, 255), roll_mode: bool = False, roll_config: int = 0):
+                """Draw a customizable menu with optional roll offset support.
+
+                Args:
+                    screen: pygame surface to render on.
+                    options (list[str]): Menu labels.
+                    font (pygame.font.Font): Font used for text rendering.
+                    select (int): Index of selected menu item.
+                    auto_fill (bool): If True, clear the screen before drawing.
+                    color_selected (tuple): Color for selected option.
+                    color_unselected (tuple): Color for unselected options.
+                    roll_mode (bool): Enable roll offset.
+                    roll_config (int): Vertical offset value when roll_mode is enabled.
+
+                Returns:
+                    None
+                """
                 if auto_fill:
                     screen.fill((0,0,0))
                 for i, option in enumerate(options):
@@ -536,8 +837,26 @@ class pyga_me:
                     screen.blit(text_surface, (x, y))
     
     class objects:
+        """Container for game object classes that support 2D and RPG movement."""
         class Player2D:
+            """2D player object with walking, jumping, and animation support."""
             def __init__(self, size: tuple[int], right_frames_stop: list[pygame.Surface]| str , left_frames_stop: list[pygame.Surface]| str, right_frames_walking: list[pygame.Surface]| str, left_frames_walking: list[pygame.Surface]| str, gravity: int, vel:int, jump_limit: int, screen):
+                """Initialize a 2D player with frame assets, physics, and event emission.
+
+                Args:
+                    size (tuple[int]): Player width and height.
+                    right_frames_stop (list|str): Right-facing idle frames or GIF path.
+                    left_frames_stop (list|str): Left-facing idle frames or GIF path.
+                    right_frames_walking (list|str): Right-facing walking frames or GIF path.
+                    left_frames_walking (list|str): Left-facing walking frames or GIF path.
+                    gravity (int): Gravity applied during updates.
+                    vel (int): Horizontal movement velocity.
+                    jump_limit (int): Maximum jump energy.
+                    screen: pygame surface used to compute screen bounds.
+
+                Returns:
+                    None
+                """
                 pyga_me.events.events_inmoment.append(pyga_me.events.event(pyga_me.Values.P2DCREATED, self))
                 self.size = size
                 self.r_frames = right_frames_stop
@@ -578,9 +897,15 @@ class pyga_me:
                 self._eventsinmoment: deque[pygame.event.Event] = deque()
 
             def colect_events(self, event: pygame.event.Event):
+                """Queue a pygame event for later player-specific processing."""
                 self._eventsinmoment.append(event)
     
             def _get_colect_events(self):
+                """Consume and return any queued player events.
+
+                Returns:
+                    list: Collected pygame events for this player.
+                """
                 events = []
                 try:
                     ev: pygame.event.Event = self._eventsinmoment.popleft()
@@ -590,6 +915,22 @@ class pyga_me:
                 return events
         
             def update(self, special_keys: int | list[int], consequences: Callable | list[Callable], AltoXYBarrier: bool = True, screen = None):
+                """Update the player position, jump state, and special key actions.
+
+                Args:
+                    special_keys (int | list[int]): Key or keys that trigger special consequences.
+                    consequences (Callable | list[Callable]): Action(s) to invoke when special keys are pressed.
+                    AltoXYBarrier (bool): Enable boundary-aware gravity and movement.
+                    screen: pygame surface used to compute bounds.
+
+                Behavior:
+                    - applies gravity and movement based on arrow keys
+                    - handles jumping with space/up keys
+                    - emits movement and special key press events
+
+                Returns:
+                    None
+                """
                 if not self.alive:
                     self.events.events_inmoment.append(pyga_me.events.event(pyga_me.Values.P2DDEAD, self))
                     return 
@@ -691,6 +1032,15 @@ class pyga_me:
                                 pass
 
             def draw(self, screen, alto_fill: bool = True):
+                """Render the player using the current animation frames and direction.
+
+                Args:
+                    screen: pygame surface to draw on.
+                    alto_fill (bool): Clear the screen before drawing if True.
+
+                Returns:
+                    None
+                """
                 if not self.alive:
                     return
                 if self.direction == "right":
@@ -750,11 +1100,35 @@ class pyga_me:
                 self.player.animation(self.frames, screen, False, 60, (x, y))
     
             def get_size(self):
+                """Return the player size as a width/height tuple.
+
+                Returns:
+                    tuple[int, int]: Player width and height.
+                """
                 return self.size[0], self.size[1] if isinstance(self.size, tuple) or isinstance(self.size, list) else self.size, self.size
 
 
         class PlayerRPG:
+            """RPG-style player object with directional movement and animation."""
             def __init__(self, frames_up_stop: list, frames_down_stop: list, frames_left_stop: list, frames_right_stop: list, frames_up_walking: list, frames_down_walking: list, frames_left_walking: list, frames_right_walking: list, size: tuple[int], vel:int, screen):
+                """Initialize an RPG player with directional frame animations.
+
+                Args:
+                    frames_up_stop (list): Up-facing idle frames or GIF path.
+                    frames_down_stop (list): Down-facing idle frames or GIF path.
+                    frames_left_stop (list): Left-facing idle frames or GIF path.
+                    frames_right_stop (list): Right-facing idle frames or GIF path.
+                    frames_up_walking (list): Up-facing walking frames or GIF path.
+                    frames_down_walking (list): Down-facing walking frames or GIF path.
+                    frames_left_walking (list): Left-facing walking frames or GIF path.
+                    frames_right_walking (list): Right-facing walking frames or GIF path.
+                    size (tuple[int]): Character width and height.
+                    vel (int): Movement velocity.
+                    screen: pygame surface used to compute bounds.
+
+                Returns:
+                    None
+                """
                 self.animation = pyga_me.animation()
                 self.frames_up_stop = frames_up_stop
                 self.frames_down_stop = frames_down_stop
@@ -792,6 +1166,22 @@ class pyga_me:
                 pyga_me.events.events_inmoment.append(pyga_me.events.event(pyga_me.Values.RPGCREATED, self))
 
             def update(self, special_keys: int | list[int], consequences: Callable | list[Callable], AltoXYBarrier: bool = False, screen = None):
+                """Update the RPG player movement and handle special key actions.
+
+                Args:
+                    special_keys (int | list[int]): Trigger keys for special actions.
+                    consequences (Callable | list[Callable]): Action(s) invoked on key press.
+                    AltoXYBarrier (bool): Enable boundary-aware movement.
+                    screen: pygame surface used to compute bounds.
+
+                Behavior:
+                    - moves the player based on arrow keys
+                    - updates direction and walking state
+                    - emits RPGMOVE and RPGSPECIALKEYPRESSED events
+
+                Returns:
+                    None
+                """
                 if not self.alive:
                     pyga_me.events.events_inmoment.append(pyga_me.events.event(pyga_me.Values.RPGDEAD, self))
                     return
@@ -877,6 +1267,15 @@ class pyga_me:
                                     pyga_me.events.events_inmoment.append(pyga_me.events.event(pyga_me.Values.RPGSPECIALKEYPRESSED, [self, special_keys[0], consequences]))
         
             def draw(self, screen, alto_fill: bool = True):
+                """Render the RPG player based on current direction and walking state.
+
+                Args:
+                    screen: pygame surface to draw on.
+                    alto_fill (bool): Clear the screen before drawing if True.
+
+                Returns:
+                    None
+                """
                 if not self.alive:
                     return
                 if self.direction == "up":
@@ -942,9 +1341,37 @@ class pyga_me:
                 self.animation.animation(frames, screen, False, 60, (x, y))
     
             def get_size(self):
+                """Return the RPG player size as a width/height tuple.
+
+                Returns:
+                    tuple[int, int]: Player width and height.
+                """
                 return self.size[0], self.size[1] if isinstance(self.size, tuple) or isinstance(self.size, list) else self.size, self.size
 
     def load_file(url, cache_file, extension=None, TimeLimitAllowed: float = 10.0):
+        """Download or retrieve a cached file from a URL using hashed cache naming.
+
+        Args:
+            url (str): Remote resource URL.
+            cache_file (str): Local cache directory or relative path.
+            extension (str, optional): Force a file extension for the saved file.
+                Defaults to None.
+            TimeLimitAllowed (float, optional): Threshold in seconds for download timing.
+                Defaults to 10.0.
+
+        Behavior:
+            - finds or creates the cache directory
+            - generates a consistent hashed filename
+            - downloads the remote resource only when missing locally
+            - logs download lag or success events
+            - returns the local cached path
+
+        Example:
+            >>> path = pyga_me.load_file('https://example.com/sound.wav', 'cache')
+
+        Returns:
+            str: Path to the downloaded or cached file.
+        """
         if os_me.path.FileHunter_TrueOrFalse(cache_file):
             cache = os_me.path.FileHunter(cache_file)
         else:
